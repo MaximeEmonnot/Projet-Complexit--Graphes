@@ -1,6 +1,7 @@
 import CoreEngine.Window;
 import ExceptionEngine.EngineException;
 import MainEngine.Engine;
+import MainEngine.Graph.TSPGraph;
 
 public class Main
 {
@@ -18,6 +19,5 @@ public class Main
             EngineException.ShowMessageBox(e, "Java Swing Engine Exception");
         }
     }
-
     private final static float FPS = 60.f;
 };
