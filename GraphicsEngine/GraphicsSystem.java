@@ -85,16 +85,16 @@ public class GraphicsSystem extends JPanel {
             }
     }
 
-    public void DrawRoundRect(Rectangle r, Point roundness, Color c, boolean bIsFilled){
+    public void DrawRoundRect(Rectangle r, Dimension roundness, Color c, boolean bIsFilled){
         DrawRoundRect(r, roundness, c, bIsFilled, 0);
     }
-    public void DrawRoundRect(Rectangle r, Point roundness, Color c, boolean bIsFilled, int priority)
+    public void DrawRoundRect(Rectangle r, Dimension roundness, Color c, boolean bIsFilled, int priority)
     {
         synchronized (renderMap){
             renderMap.add(Map.entry(priority, (Graphics g) -> {
                 g.setColor(c);
-                if (bIsFilled) g.fillRoundRect(r.x, r.y, r.width, r.height, roundness.x, roundness.y);
-                else g.drawRoundRect(r.x, r.y, r.width, r.height, roundness.x, roundness.y);
+                if (bIsFilled) g.fillRoundRect(r.x, r.y, r.width, r.height, roundness.width, roundness.height);
+                else g.drawRoundRect(r.x, r.y, r.width, r.height, roundness.width, roundness.height);
             }));
             }
     }

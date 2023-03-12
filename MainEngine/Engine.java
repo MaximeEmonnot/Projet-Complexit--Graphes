@@ -6,15 +6,16 @@ import CoreEngine.Mouse;
 import CoreEngine.Timer;
 import GraphicsEngine.GraphicsSystem;
 import GraphicsEngine.SpriteFactory;
+import MainEngine.Graph.TSPGraph;
 import UIEngine.UIInputBox;
 
 public class Engine {
     
-    private Engine() {
-        test = new UIInputBox(new Rectangle(15, 15, 256, 64), "Test");
+    private Engine() throws Exception {
+        graph = new TSPGraph("Assets/Graphs/test.graphe");
     }
 
-    public static Engine GetInstance(){
+    public static Engine GetInstance() throws Exception{
         if (instance == null) instance = new Engine();
         return instance;
     }
@@ -27,13 +28,13 @@ public class Engine {
     }
 
     private void Update() throws Exception {
-        test.Update();
+        
     }
     private void Draw(){
         GraphicsSystem.GetInstance().SetBackgroundColor(Color.MAGENTA);
-        GraphicsSystem.GetInstance().DrawSprite(SpriteFactory.GetInstance().GetSprite("Assets/Images/test.png"), Mouse.GetInstance().GetMousePos(), 1);
+        //GraphicsSystem.GetInstance().DrawSprite(SpriteFactory.GetInstance().GetSprite("Assets/Images/test.png"), Mouse.GetInstance().GetMousePos(), 1);
    
-        test.Draw(3);
+        graph.Draw(new Point(400, 275), 200);
     }
 
     private void BeginLoop(){
@@ -49,5 +50,5 @@ public class Engine {
 
     private static Engine instance = null;
 
-    UIInputBox test;
+    TSPGraph graph;
 }

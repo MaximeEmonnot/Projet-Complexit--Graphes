@@ -1,7 +1,6 @@
 import CoreEngine.Window;
 import ExceptionEngine.EngineException;
 import MainEngine.Engine;
-import MainEngine.Graph.TSPGraph;
 
 public class Main
 {
