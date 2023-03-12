@@ -98,6 +98,12 @@ public class TSPGraph {
 		cycle = new HashMap<UnorderedPair, Integer>();
 	}
 
+	public int GetCycleCost(){
+		int output = 0;
+		for (Map.Entry<UnorderedPair, Integer> entry : cycle.entrySet()) output += entry.getValue();
+		return output;
+	}
+
 	public Set<String> GetNodes(){
 		return nodes;
 	}

@@ -16,7 +16,10 @@ public class Engine {
         
         buttonRandom = new UIButton(new Rectangle(620, 50, 150, 50), "Random Cycle", 
         () -> {
+            Timer.GetInstance().Update();
             graph.SetCycle(Algorithms.RandomCycle(graph));
+            Timer.GetInstance().Update();
+            algorithmTime = Timer.GetInstance().DeltaTime();
         }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
 
         buttonNearest = new UIButton(new Rectangle(620, 100, 150, 50), "Nearest Neighbor", 
@@ -32,6 +35,7 @@ public class Engine {
         buttonReset = new UIButton(new Rectangle(620, 200, 150, 50), "Reset", 
         () -> {
             graph.ResetCycle();
+            algorithmTime = 0.f;
         }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
     }
 
@@ -62,6 +66,11 @@ public class Engine {
         buttonReset.Draw(10);
 
         graph.Draw(new Point(350, 275), 200);
+
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(550, 370, 225, 75), Color.BLACK, true, 2);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(552, 372, 221, 71), Color.WHITE, true, 3);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm duration : " + Float.toString(algorithmTime), new Point(575, 400), Color.RED, 5);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm result : " + Integer.toString(graph.GetCycleCost()), new Point(575, 425), Color.RED, 5);
     }
 
     private void BeginLoop(){
@@ -82,4 +91,6 @@ public class Engine {
     UIButton buttonNearest;
     UIButton buttonLinKernighan;
     UIButton buttonReset;
+
+    float algorithmTime = 0.f;
 }
