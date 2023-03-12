@@ -5,7 +5,7 @@ import GraphicsEngine.GraphicsSystem;
 
 public class Window extends JFrame {
     private Window() {
-        setTitle("XML Engine");
+        setTitle("C&G Engine");
         setBounds(50, 50, width, height);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         addKeyListener(Keyboard.GetInstance());

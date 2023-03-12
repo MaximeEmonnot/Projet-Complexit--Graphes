@@ -5,14 +5,34 @@ import CoreEngine.Keyboard;
 import CoreEngine.Mouse;
 import CoreEngine.Timer;
 import GraphicsEngine.GraphicsSystem;
-import GraphicsEngine.SpriteFactory;
+import MainEngine.Graph.Algorithms;
 import MainEngine.Graph.TSPGraph;
-import UIEngine.UIInputBox;
+import UIEngine.UIButton;
 
 public class Engine {
     
     private Engine() throws Exception {
         graph = new TSPGraph("Assets/Graphs/test.graphe");
+        
+        buttonRandom = new UIButton(new Rectangle(620, 50, 150, 50), "Random Cycle", 
+        () -> {
+            graph.SetCycle(Algorithms.RandomCycle(graph));
+        }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+
+        buttonNearest = new UIButton(new Rectangle(620, 100, 150, 50), "Nearest Neighbor", 
+        () -> {
+            graph.SetCycle(Algorithms.NearestNeighbour(graph));
+        }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+
+        buttonLinKernighan = new UIButton(new Rectangle(620, 150, 150, 50), "Lin Kernighan", 
+        () -> {
+            graph.SetCycle(Algorithms.LinKernighanHeuristic(graph));
+        }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+
+        buttonReset = new UIButton(new Rectangle(620, 200, 150, 50), "Reset", 
+        () -> {
+            graph.ResetCycle();
+        }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
     }
 
     public static Engine GetInstance() throws Exception{
@@ -28,13 +48,20 @@ public class Engine {
     }
 
     private void Update() throws Exception {
-        
+        buttonRandom.Update();
+        buttonNearest.Update();    
+        buttonLinKernighan.Update();
+        buttonReset.Update();
     }
     private void Draw(){
-        GraphicsSystem.GetInstance().SetBackgroundColor(Color.MAGENTA);
-        //GraphicsSystem.GetInstance().DrawSprite(SpriteFactory.GetInstance().GetSprite("Assets/Images/test.png"), Mouse.GetInstance().GetMousePos(), 1);
+        GraphicsSystem.GetInstance().SetBackgroundColor(Color.DARK_GRAY);
    
-        graph.Draw(new Point(400, 275), 200);
+        buttonRandom.Draw(10);
+        buttonNearest.Draw(10);
+        buttonLinKernighan.Draw(10);
+        buttonReset.Draw(10);
+
+        graph.Draw(new Point(350, 275), 200);
     }
 
     private void BeginLoop(){
@@ -51,4 +78,8 @@ public class Engine {
     private static Engine instance = null;
 
     TSPGraph graph;
+    UIButton buttonRandom;
+    UIButton buttonNearest;
+    UIButton buttonLinKernighan;
+    UIButton buttonReset;
 }

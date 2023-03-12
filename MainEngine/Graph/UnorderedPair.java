@@ -1,7 +1,5 @@
 package MainEngine.Graph;
 
-import java.util.Objects;
-
 public class UnorderedPair {
 	
 	public UnorderedPair(String left , String right) {
@@ -22,17 +20,14 @@ public class UnorderedPair {
         if (o == null || getClass() != o.getClass()) 
         	return false;  
         
-        UnorderedPair unorderedPair = (UnorderedPair) o; 
+        UnorderedPair rhs = (UnorderedPair) o; 
         
-        return Objects.equals(getLeft(), unorderedPair.getLeft()) && Objects.equals(getLeft(), unorderedPair.getLeft()) 
-        		|| Objects.equals(getLeft(), unorderedPair.getRight()) && Objects.equals(getRight(), unorderedPair.getLeft()); 
+        return (left.equals(rhs.left) && right.equals(rhs.right)) || (left.equals(rhs.right) && right.equals(rhs.left)); 
     }
 	
 	@Override
 	public int hashCode() {
-	    int hash = 7;
-	    hash = 31 * hash + left.hashCode() + right.hashCode();
-	    return hash;
+		return 31 * 7 + left.hashCode() + right.hashCode();
 	}
 	
 	private String right;

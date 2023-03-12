@@ -3,13 +3,12 @@ package MainEngine.Graph;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import GraphicsEngine.GraphicsSystem;
 
 import java.awt.*;
 
@@ -19,6 +18,7 @@ public class TSPGraph {
     	
     	distances = new HashMap<UnorderedPair,Integer>();
     	nodes = new HashSet<String>();
+		cycle = new HashMap<UnorderedPair, Integer>();
     	
     	List<String> lines =  Files.readAllLines(Paths.get(path));
         for (String l : lines){
@@ -65,8 +65,45 @@ public class TSPGraph {
 			index++;
 		}
 		// Affichage des arcs
-		for (Point pointA : points) for (Point pointB : points) GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(pointA, pointB, Color.BLACK, priority);
+		if (cycle.isEmpty()) for (Point pointA : points) for (Point pointB : points) 
+			GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(pointA, pointB, Color.BLUE, priority);
+		else{
+			int nodeRadius = (int)(radius * (1.f - nodes.size() * 0.01f) / 5.f) ;
+			int indexA = 0;
+			for (String nodeA : nodes) {
+				Point nodeALocation = new Point();
+				nodeALocation.x = center.x + (int)(Math.sin(2 * Math.PI * indexA / nodes.size()) * radius) - 2 * nodeRadius / 3;
+				nodeALocation.y = center.y - (int)(Math.cos(2 * Math.PI * indexA / nodes.size()) * radius) - nodeRadius / 3;
+				int indexB = 0;
+				for (String nodeB : nodes){
+					if (!nodeB.equals(nodeA)) {
+						Point nodeBLocation = new Point();
+						nodeBLocation.x = center.x + (int)(Math.sin(2 * Math.PI * indexB / nodes.size()) * radius) - 2 * nodeRadius / 3;
+						nodeBLocation.y = center.y - (int)(Math.cos(2 * Math.PI * indexB / nodes.size()) * radius) - nodeRadius / 3;
+						UnorderedPair pair = new UnorderedPair(nodeA, nodeB);
+						if (cycle.containsKey(pair)) GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(nodeALocation, nodeBLocation, Color.GREEN, priority);
+					}
+					indexB++;
+				}
+				indexA++;
+			}
+		}
+	}
 
+	public void SetCycle(Map<UnorderedPair, Integer> newCycle){
+		cycle = newCycle;
+	}
+
+	public void ResetCycle() {
+		cycle = new HashMap<UnorderedPair, Integer>();
+	}
+
+	public Set<String> GetNodes(){
+		return nodes;
+	}
+	
+	public Map<UnorderedPair, Integer> GetDistances() {
+		return distances;
 	}
     
     // Verifie si tous les couples de noeuds sont reli�s et si les couts sont superieurs ou egaux a 0 
@@ -86,4 +123,5 @@ public class TSPGraph {
 
     private Map<UnorderedPair,Integer> distances;
     private Set<String> nodes;
+	private Map<UnorderedPair, Integer> cycle;
 }
