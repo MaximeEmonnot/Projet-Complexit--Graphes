@@ -1,5 +1,7 @@
 package MainEngine;
 import java.awt.*;
+import java.io.File;
+import java.util.LinkedHashMap;
 
 import CoreEngine.Keyboard;
 import CoreEngine.Mouse;
@@ -8,6 +10,8 @@ import GraphicsEngine.GraphicsSystem;
 import MainEngine.Graph.Algorithms;
 import MainEngine.Graph.TSPGraph;
 import UIEngine.UIButton;
+import UIEngine.UISelectionMenu;
+import UIEngine.UITextBox;
 
 public class Engine {
     
@@ -37,6 +41,17 @@ public class Engine {
             graph.ResetCycle();
             algorithmTime = 0.f;
         }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+
+        TextBoxSelectionGraphsTitle = new UITextBox(new Rectangle(580, 300, 190, 50), "Select Graph");
+        selectionMenuGraphs = new UISelectionMenu(new Rectangle(580, 350, 190, 170));
+        RefreshSelectionMenuGraphs();
+         
+        buttonRefreshMenu = new UIButton(new Rectangle(580, 520, 150, 50), "Refresh List", 
+                () -> {
+                	RefreshSelectionMenuGraphs();
+                }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+        
+        
     }
 
     public static Engine GetInstance() throws Exception{
@@ -56,6 +71,8 @@ public class Engine {
         buttonNearest.Update();    
         buttonLinKernighan.Update();
         buttonReset.Update();
+        selectionMenuGraphs.Update();
+        buttonRefreshMenu.Update();
     }
     private void Draw(){
         GraphicsSystem.GetInstance().SetBackgroundColor(Color.DARK_GRAY);
@@ -64,13 +81,13 @@ public class Engine {
         buttonNearest.Draw(10);
         buttonLinKernighan.Draw(10);
         buttonReset.Draw(10);
+        selectionMenuGraphs.Draw(10);
+        TextBoxSelectionGraphsTitle.Draw(10);
+        buttonRefreshMenu.Draw(10);
 
         graph.Draw(new Point(350, 275), 200);
-
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(550, 370, 225, 75), Color.BLACK, true, 2);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(552, 372, 221, 71), Color.WHITE, true, 3);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm duration : " + Float.toString(algorithmTime), new Point(575, 400), Color.RED, 5);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm result : " + Integer.toString(graph.GetCycleCost()), new Point(575, 425), Color.RED, 5);
+        
+        
     }
 
     private void BeginLoop(){
@@ -83,6 +100,21 @@ public class Engine {
 
         GraphicsSystem.GetInstance().Render();
     }
+    
+    
+    private void RefreshSelectionMenuGraphs() throws Exception{
+    	LinkedHashMap<String, UIButton.Lambda> items = new LinkedHashMap<String, UIButton.Lambda>();
+    	
+    	final File folder = new File("./Assets/Graphs");
+    	for (final File fileEntry : folder.listFiles()) {
+    		String test = fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1);
+    		if(fileEntry.isFile() && fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1).equals("graphe")){
+    			items.put(fileEntry.getName(), () -> {if(new File(fileEntry.getPath()).exists()) graph = new TSPGraph(fileEntry.getPath());});
+    		}
+    	}
+    	
+    	selectionMenuGraphs.UpdateSelections(items);
+    }
 
     private static Engine instance = null;
 
@@ -91,6 +123,9 @@ public class Engine {
     UIButton buttonNearest;
     UIButton buttonLinKernighan;
     UIButton buttonReset;
+    UITextBox TextBoxSelectionGraphsTitle;
+    UISelectionMenu selectionMenuGraphs;
+    UIButton buttonRefreshMenu;
 
     float algorithmTime = 0.f;
 }
