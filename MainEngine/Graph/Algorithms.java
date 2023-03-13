@@ -48,26 +48,10 @@ public class Algorithms {
         Set<String> unvisitedNodes = new HashSet<String>(nodes);
         unvisitedNodes.remove(startNode);
     
-        // Calcule du point le plus proche du point de départ
-        String nearestNeighbour = null;
-        int nearestDistance = Integer.MAX_VALUE;
-        for (String other : unvisitedNodes) {
-            UnorderedPair pair = new UnorderedPair(startNode, other);
-            int distance = distances.get(pair);
-            if (distance < nearestDistance) {
-                nearestDistance = distance;
-                nearestNeighbour = other;
-            }
-        }
-        if (nearestNeighbour == null) {
-            System.out.println("Erreur : le voisin le plus proche du point " + startNode + " n'a pas été trouvé.");
-            return null;
-        }
-    
         while (unvisitedNodes.size() > 0) {
             // Calcule du point le plus proche du point courant
-            nearestNeighbour = null;
-            nearestDistance = Integer.MAX_VALUE;
+            String nearestNeighbour = null;
+            int nearestDistance = Integer.MAX_VALUE;
             for (String other : unvisitedNodes) {
                 UnorderedPair pair = new UnorderedPair(startNode, other);
                 int distance = distances.get(pair);
