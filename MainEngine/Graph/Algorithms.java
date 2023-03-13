@@ -64,12 +64,6 @@ public class Algorithms {
             return null;
         }
     
-        System.out.println("Current node: " + startNode);
-        System.out.println("Nearest neighbour: " + nearestNeighbour);
-        UnorderedPair firstEdge = new UnorderedPair(startNode, nearestNeighbour);
-        output.put(firstEdge, distances.get(firstEdge));
-        unvisitedNodes.remove(nearestNeighbour);
-    
         while (unvisitedNodes.size() > 0) {
             // Calcule du point le plus proche du point courant
             nearestNeighbour = null;
@@ -89,15 +83,15 @@ public class Algorithms {
     
             System.out.println("Current node: " + startNode);
             System.out.println("Nearest neighbour: " + nearestNeighbour);
-            UnorderedPair edge = new UnorderedPair(startNode, nearestNeighbour);
-            output.put(edge, distances.get(edge));
+            UnorderedPair firstArc = new UnorderedPair(startNode, nearestNeighbour);
+            output.put(firstArc, distances.get(firstArc));
             startNode = nearestNeighbour;
             unvisitedNodes.remove(startNode);
         }
     
         // Ajout du dernier arc pour revenir au point de départ
-        UnorderedPair dernierArc = new UnorderedPair(startNode, currentNode);
-        output.put(dernierArc, distances.get(dernierArc));
+        UnorderedPair lastArc = new UnorderedPair(startNode, currentNode);
+        output.put(lastArc, distances.get(lastArc));
     
         for (Map.Entry<UnorderedPair, Integer> entry : output.entrySet()) {
             UnorderedPair pair = entry.getKey();
