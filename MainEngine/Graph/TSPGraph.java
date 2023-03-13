@@ -76,12 +76,12 @@ public class TSPGraph {
 			nodeLocation.x = center.x + (int)(Math.sin(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
 			nodeLocation.y = center.y - (int)(Math.cos(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
 			points.add(nodeLocation);
-			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius + 2, nodeRadius + 1)), 
+			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius + 2, nodeRadius + 2)), 
 																	  new Dimension(nodeRadius + 2, nodeRadius + 2), Color.BLACK, true, priority);
 			
 			Color nodeColor = Color.WHITE;
-			if (node.equals(selectedNode)) nodeColor = Color.BLUE;
 			if (node.equals(firstNode)) nodeColor = Color.GREEN;
+			if (node.equals(selectedNode)) nodeColor = Color.BLUE;
 												  
 			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius, nodeRadius)), 
 																	  new Dimension(nodeRadius, nodeRadius), nodeColor, true, priority + 2);
