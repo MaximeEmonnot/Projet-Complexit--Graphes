@@ -14,11 +14,13 @@ import java.awt.*;
 
 public class TSPGraph {
 
-    public TSPGraph(String path) throws Exception{
+    public TSPGraph(String path, Point _center, float _radius) throws Exception{
     	
     	distances = new HashMap<UnorderedPair,Integer>();
     	nodes = new HashSet<String>();
 		cycle = new HashMap<UnorderedPair, Integer>();
+		center = _center;
+		radius = _radius;
     	
     	List<String> lines =  Files.readAllLines(Paths.get(path));
         for (String l : lines){
@@ -39,11 +41,32 @@ public class TSPGraph {
     	return distances.get(new UnorderedPair(a, b));
     }
 
-	// Affichage des nodes : Principe des racines n-ième de l'unité
-	public void Draw(Point center, float radius){
-		Draw(center, radius, 0);
+	public void Update() {
+		CoreEngine.Mouse.EEventType event = CoreEngine.Mouse.GetInstance().Read();
+		if (event == CoreEngine.Mouse.EEventType.LRelease){
+			Point mousePos = CoreEngine.Mouse.GetInstance().GetMousePos();
+			int index = 0;
+			for (String node : nodes ){
+				int nodeRadius = (int)(radius * (1.f - nodes.size() * 0.01f) / 5.f) ;
+				Point nodeLocation = new Point();
+				nodeLocation.x = center.x + (int)(Math.sin(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
+				nodeLocation.y = center.y - (int)(Math.cos(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
+				Rectangle rect = new Rectangle(nodeLocation, new Dimension(nodeRadius, nodeRadius));
+				if (rect.contains(mousePos)){
+					if (selectedNode.equals(node)) selectedNode = "";
+					else selectedNode = node;
+					break;
+				}
+				index++;
+			}
+		}
 	}
-	public void Draw(Point center, float radius, int priority){
+
+	// Affichage des nodes : Principe des racines n-ième de l'unité
+	public void Draw(){
+		Draw(0);
+	}
+	public void Draw(int priority){
 		Set<Point> points = new HashSet<Point>();
 		int index = 0;
 		for (String node : nodes){
@@ -55,12 +78,13 @@ public class TSPGraph {
 			points.add(nodeLocation);
 			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius + 2, nodeRadius + 1)), 
 																	  new Dimension(nodeRadius + 2, nodeRadius + 2), Color.BLACK, true, priority);
-			if (node.equals(firstNode))	
-				GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius, nodeRadius)), 
-																	  new Dimension(nodeRadius, nodeRadius), Color.GREEN, true, priority + 2);
-			else 													  
-				GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius, nodeRadius)), 
-																	  new Dimension(nodeRadius, nodeRadius), Color.WHITE, true, priority + 2);
+			
+			Color nodeColor = Color.WHITE;
+			if (node.equals(selectedNode)) nodeColor = Color.BLUE;
+			if (node.equals(firstNode)) nodeColor = Color.GREEN;
+												  
+			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius, nodeRadius)), 
+																	  new Dimension(nodeRadius, nodeRadius), nodeColor, true, priority + 2);
 																	  
 			
 			nodeLocation.x += nodeRadius / 3;
@@ -102,6 +126,10 @@ public class TSPGraph {
 		firstNode = newFirstNode;
 	}
 
+	public String GetSelectedNode() {
+		return selectedNode;
+	}
+
 	public void ResetCycle() {
 		cycle = new HashMap<UnorderedPair, Integer>();
 		firstNode = "";
@@ -139,5 +167,8 @@ public class TSPGraph {
     private Map<UnorderedPair,Integer> distances;
     private Set<String> nodes;
 	private Map<UnorderedPair, Integer> cycle;
+	private Point center;
+	private float radius;
+	private String selectedNode = "";
 	private String firstNode = "";
 }

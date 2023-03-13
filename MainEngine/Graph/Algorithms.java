@@ -18,8 +18,9 @@ public class Algorithms {
 		List<String> unvisitedNodes = new ArrayList<String>();
 		for (String node : graph.GetNodes()) unvisitedNodes.add(node);
 
-		// On prend ensuite un noeud aléatoire : 
-		String current = unvisitedNodes.get((int)(Math.random() * unvisitedNodes.size()));
+		// On prend ensuite un noeud aléatoire (si aucun noeud n'est sélectionné, sinon on prend le noeud sélectionné)
+        String current = graph.GetSelectedNode();
+        if (current.isEmpty()) current = unvisitedNodes.get((int)(Math.random() * unvisitedNodes.size()));
         String firstNode = current;
 		unvisitedNodes.remove(current);
 		// Et on génère le cycle aléatoire
@@ -42,8 +43,9 @@ public class Algorithms {
         Map<UnorderedPair, Integer> distances = graph.GetDistances();
         Set<String> nodes = graph.GetNodes();
     
-        // Choisir un point de départ aléatoire
-        String currentNode = getRandomElement(nodes);
+        // Choisir un point de départ aléatoire (si aucun noeud sélectionné, sinon on démarre à partir du noeud sélectionné)
+        String currentNode = graph.GetSelectedNode();
+        if (currentNode.isEmpty()) currentNode = getRandomElement(nodes);
     
         String firstNode = currentNode;
         Set<String> unvisitedNodes = new HashSet<String>(nodes);

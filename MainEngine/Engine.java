@@ -14,7 +14,7 @@ import UIEngine.UIButton;
 public class Engine {
     
     private Engine() throws Exception {
-        graph = new TSPGraph("Assets/Graphs/test.graphe");
+        graph = new TSPGraph("Assets/Graphs/test.graphe", new Point(350, 275), 200);
         
         buttonRandom = new UIButton(new Rectangle(620, 50, 150, 50), "Random Cycle", 
         () -> {
@@ -70,6 +70,8 @@ public class Engine {
     }
 
     private void Update() throws Exception {
+        graph.Update();
+
         buttonRandom.Update();
         buttonNearest.Update();    
         buttonLinKernighan.Update();
@@ -83,7 +85,7 @@ public class Engine {
         buttonLinKernighan.Draw(10);
         buttonReset.Draw(10);
 
-        graph.Draw(new Point(350, 275), 200);
+        graph.Draw();
 
         GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(550, 370, 225, 75), Color.BLACK, true, 2);
         GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(552, 372, 221, 71), Color.WHITE, true, 3);
