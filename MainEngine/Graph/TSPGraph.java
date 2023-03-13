@@ -55,7 +55,11 @@ public class TSPGraph {
 			points.add(nodeLocation);
 			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius + 2, nodeRadius + 1)), 
 																	  new Dimension(nodeRadius + 2, nodeRadius + 2), Color.BLACK, true, priority);
-			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius, nodeRadius)), 
+			if (node.equals(firstNode))	
+				GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius, nodeRadius)), 
+																	  new Dimension(nodeRadius, nodeRadius), Color.GREEN, true, priority + 2);
+			else 													  
+				GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius, nodeRadius)), 
 																	  new Dimension(nodeRadius, nodeRadius), Color.WHITE, true, priority + 2);
 																	  
 			
@@ -93,9 +97,14 @@ public class TSPGraph {
 	public void SetCycle(Map<UnorderedPair, Integer> newCycle){
 		cycle = newCycle;
 	}
+	
+	public void SetCycleFirstNode(String newFirstNode){
+		firstNode = newFirstNode;
+	}
 
 	public void ResetCycle() {
 		cycle = new HashMap<UnorderedPair, Integer>();
+		firstNode = "";
 	}
 
 	public int GetCycleCost(){
@@ -130,4 +139,5 @@ public class TSPGraph {
     private Map<UnorderedPair,Integer> distances;
     private Set<String> nodes;
 	private Map<UnorderedPair, Integer> cycle;
+	private String firstNode = "";
 }

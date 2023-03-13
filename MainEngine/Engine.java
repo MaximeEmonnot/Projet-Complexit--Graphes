@@ -19,24 +19,35 @@ public class Engine {
         buttonRandom = new UIButton(new Rectangle(620, 50, 150, 50), "Random Cycle", 
         () -> {
             Timer.GetInstance().Update();
-            graph.SetCycle(Algorithms.RandomCycle(graph));
+            Map.Entry<String, Map<UnorderedPair, Integer>> result = Algorithms.RandomCycle(graph);
+            graph.SetCycle(result.getValue());
+            graph.SetCycleFirstNode(result.getKey());
+            Timer.GetInstance().Update();
+            algorithmTime = Timer.GetInstance().DeltaTime();
+        }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+        
+        buttonNearest = new UIButton(new Rectangle(620, 100, 150, 50), "Nearest Neighbor", 
+        () -> {
+            Timer.GetInstance().Update();
+            Map.Entry<String, Map<UnorderedPair, Integer>> result = Algorithms.NearestNeighbour(graph);
+            if (result != null) {
+                graph.SetCycle(result.getValue());
+                graph.SetCycleFirstNode(result.getKey());
+            } else {
+                System.out.println("Nearest Neighbor algorithm failed to find a cycle.");
+            }
             Timer.GetInstance().Update();
             algorithmTime = Timer.GetInstance().DeltaTime();
         }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
 
-        buttonNearest = new UIButton(new Rectangle(620, 100, 150, 50), "Nearest Neighbor", 
-        () -> {
-            Map<UnorderedPair, Integer> result = Algorithms.NearestNeighbour(graph);
-            if (result != null) {
-                graph.SetCycle(result);
-            } else {
-                System.out.println("Nearest Neighbor algorithm failed to find a cycle.");
-            }
-        }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
-
         buttonLinKernighan = new UIButton(new Rectangle(620, 150, 150, 50), "Lin Kernighan", 
         () -> {
-            graph.SetCycle(Algorithms.LinKernighanHeuristic(graph));
+            Timer.GetInstance().Update();
+            Map.Entry<String, Map<UnorderedPair, Integer>> result = Algorithms.LinKernighanHeuristic(graph);
+            graph.SetCycle(result.getValue());
+            graph.SetCycleFirstNode(result.getKey());
+            Timer.GetInstance().Update();
+            algorithmTime = Timer.GetInstance().DeltaTime();
         }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
 
         buttonReset = new UIButton(new Rectangle(620, 200, 150, 50), "Reset", 

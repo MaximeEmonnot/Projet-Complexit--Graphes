@@ -11,7 +11,7 @@ import java.util.Iterator;
 
 public class Algorithms {
 
-    public static Map<UnorderedPair, Integer> RandomCycle(TSPGraph graph){
+    public static Map.Entry<String, Map<UnorderedPair, Integer>> RandomCycle(TSPGraph graph){
         // On créé une liste de noeuds
         Map<UnorderedPair, Integer> output = new HashMap<UnorderedPair, Integer>();
 
@@ -20,8 +20,8 @@ public class Algorithms {
 
 		// On prend ensuite un noeud aléatoire : 
 		String current = unvisitedNodes.get((int)(Math.random() * unvisitedNodes.size()));
+        String firstNode = current;
 		unvisitedNodes.remove(current);
-		String first = current;
 		// Et on génère le cycle aléatoire
 		while (!unvisitedNodes.isEmpty()){
 			String next = unvisitedNodes.get((int)(Math.random() * unvisitedNodes.size()));
@@ -31,29 +31,30 @@ public class Algorithms {
 		}
 
 		// On ajoute à présent le dernier arc pour fermer le cycle : 
-		output.put(new UnorderedPair(current, first), graph.GetDistances().get(new UnorderedPair(current, first)));
-        return output;
+		output.put(new UnorderedPair(current, firstNode), graph.GetDistances().get(new UnorderedPair(current, firstNode)));
+
+        return Map.entry(firstNode, output);
     }
 
-    public static Map<UnorderedPair, Integer> NearestNeighbour(TSPGraph graph){
+    public static Map.Entry<String, Map<UnorderedPair, Integer>> NearestNeighbour(TSPGraph graph){
         Map<UnorderedPair, Integer> output = new HashMap<UnorderedPair, Integer>();
     
         Map<UnorderedPair, Integer> distances = graph.GetDistances();
         Set<String> nodes = graph.GetNodes();
     
         // Choisir un point de départ aléatoire
-        String startNode = getRandomElement(nodes);
+        String currentNode = getRandomElement(nodes);
     
-        String currentNode = startNode;
+        String firstNode = currentNode;
         Set<String> unvisitedNodes = new HashSet<String>(nodes);
-        unvisitedNodes.remove(startNode);
+        unvisitedNodes.remove(currentNode);
     
         while (unvisitedNodes.size() > 0) {
             // Calcule du point le plus proche du point courant
             String nearestNeighbour = null;
             int nearestDistance = Integer.MAX_VALUE;
             for (String other : unvisitedNodes) {
-                UnorderedPair pair = new UnorderedPair(startNode, other);
+                UnorderedPair pair = new UnorderedPair(currentNode, other);
                 int distance = distances.get(pair);
                 if (distance < nearestDistance) {
                     nearestDistance = distance;
@@ -61,20 +62,20 @@ public class Algorithms {
                 }
             }
             if (nearestNeighbour == null) {
-                System.out.println("Erreur : le voisin le plus proche du point" + startNode + " n'a pas été trouvé.");
+                System.out.println("Erreur : le voisin le plus proche du point" + currentNode + " n'a pas été trouvé.");
                 return null;
             }
     
-            System.out.println("Current node: " + startNode);
+            System.out.println("Current node: " + currentNode);
             System.out.println("Nearest neighbour: " + nearestNeighbour);
-            UnorderedPair firstArc = new UnorderedPair(startNode, nearestNeighbour);
+            UnorderedPair firstArc = new UnorderedPair(currentNode, nearestNeighbour);
             output.put(firstArc, distances.get(firstArc));
-            startNode = nearestNeighbour;
-            unvisitedNodes.remove(startNode);
+            currentNode = nearestNeighbour;
+            unvisitedNodes.remove(currentNode);
         }
     
         // Ajout du dernier arc pour revenir au point de départ
-        UnorderedPair lastArc = new UnorderedPair(startNode, currentNode);
+        UnorderedPair lastArc = new UnorderedPair(currentNode, firstNode);
         output.put(lastArc, distances.get(lastArc));
     
         for (Map.Entry<UnorderedPair, Integer> entry : output.entrySet()) {
@@ -83,7 +84,7 @@ public class Algorithms {
             System.out.println("Arc: " + pair.getLeft() + " - " + pair.getRight() + ", Distance: " + distance);
         }
     
-        return output;
+        return Map.entry(firstNode, output);
     }
     
     private static <T> T getRandomElement(Set<T> set) {
@@ -96,11 +97,11 @@ public class Algorithms {
     }
     
 
-    public static Map<UnorderedPair, Integer> LinKernighanHeuristic(TSPGraph graph){
+    public static Map.Entry<String, Map<UnorderedPair, Integer>> LinKernighanHeuristic(TSPGraph graph){
         Map<UnorderedPair, Integer> output = new HashMap<UnorderedPair, Integer>();
 
         // TODO
 
-        return output;
+        return Map.entry("", output);
     }
 }
