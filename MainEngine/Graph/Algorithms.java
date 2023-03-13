@@ -2,8 +2,12 @@ package MainEngine.Graph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import java.util.Iterator;
 
 public class Algorithms {
 
@@ -33,11 +37,87 @@ public class Algorithms {
 
     public static Map<UnorderedPair, Integer> NearestNeighbour(TSPGraph graph){
         Map<UnorderedPair, Integer> output = new HashMap<UnorderedPair, Integer>();
-
-        // TODO
-
+    
+        Map<UnorderedPair, Integer> distances = graph.GetDistances();
+        Set<String> nodes = graph.GetNodes();
+    
+        // Choisir un point de départ aléatoire
+        String startNode = getRandomElement(nodes);
+    
+        String currentNode = startNode;
+        Set<String> unvisitedNodes = new HashSet<String>(nodes);
+        unvisitedNodes.remove(startNode);
+    
+        // Calcule du point le plus proche du point de départ
+        String nearestNeighbour = null;
+        int nearestDistance = Integer.MAX_VALUE;
+        for (String other : unvisitedNodes) {
+            UnorderedPair pair = new UnorderedPair(startNode, other);
+            int distance = distances.get(pair);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestNeighbour = other;
+            }
+        }
+        if (nearestNeighbour == null) {
+            System.out.println("Erreur : le voisin le plus proche du point " + startNode + " n'a pas été trouvé.");
+            return null;
+        }
+    
+        System.out.println("Current node: " + startNode);
+        System.out.println("Nearest neighbour: " + nearestNeighbour);
+        UnorderedPair firstEdge = new UnorderedPair(startNode, nearestNeighbour);
+        output.put(firstEdge, distances.get(firstEdge));
+        unvisitedNodes.remove(nearestNeighbour);
+    
+        while (unvisitedNodes.size() > 0) {
+            // Calcule du point le plus proche du point courant
+            nearestNeighbour = null;
+            nearestDistance = Integer.MAX_VALUE;
+            for (String other : unvisitedNodes) {
+                UnorderedPair pair = new UnorderedPair(startNode, other);
+                int distance = distances.get(pair);
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    nearestNeighbour = other;
+                }
+            }
+            if (nearestNeighbour == null) {
+                System.out.println("Erreur : le voisin le plus proche du point" + startNode + " n'a pas été trouvé.");
+                return null;
+            }
+    
+            System.out.println("Current node: " + startNode);
+            System.out.println("Nearest neighbour: " + nearestNeighbour);
+            UnorderedPair edge = new UnorderedPair(startNode, nearestNeighbour);
+            output.put(edge, distances.get(edge));
+            startNode = nearestNeighbour;
+            unvisitedNodes.remove(startNode);
+        }
+    
+        // Ajout du dernier arc pour revenir au point de départ
+        UnorderedPair dernierArc = new UnorderedPair(startNode, currentNode);
+        output.put(dernierArc, distances.get(dernierArc));
+    
+        for (Map.Entry<UnorderedPair, Integer> entry : output.entrySet()) {
+            UnorderedPair pair = entry.getKey();
+            int distance = entry.getValue();
+            System.out.println("Arc: " + pair.getLeft() + " - " + pair.getRight() + ", Distance: " + distance);
+        }
+    
         return output;
     }
+    
+    private static <T> T getRandomElement(Set<T> set) {
+        int index = (int) (Math.random() * set.size());
+        Iterator<T> iter = set.iterator();
+        for (int i = 0; i < index; i++) {
+            iter.next();
+        }
+        return iter.next();
+    }
+    
+
     public static Map<UnorderedPair, Integer> LinKernighanHeuristic(TSPGraph graph){
         Map<UnorderedPair, Integer> output = new HashMap<UnorderedPair, Integer>();
 

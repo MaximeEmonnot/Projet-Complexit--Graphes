@@ -1,5 +1,6 @@
 package MainEngine;
 import java.awt.*;
+import java.util.Map;
 
 import CoreEngine.Keyboard;
 import CoreEngine.Mouse;
@@ -7,6 +8,7 @@ import CoreEngine.Timer;
 import GraphicsEngine.GraphicsSystem;
 import MainEngine.Graph.Algorithms;
 import MainEngine.Graph.TSPGraph;
+import MainEngine.Graph.UnorderedPair;
 import UIEngine.UIButton;
 
 public class Engine {
@@ -24,7 +26,12 @@ public class Engine {
 
         buttonNearest = new UIButton(new Rectangle(620, 100, 150, 50), "Nearest Neighbor", 
         () -> {
-            graph.SetCycle(Algorithms.NearestNeighbour(graph));
+            Map<UnorderedPair, Integer> result = Algorithms.NearestNeighbour(graph);
+            if (result != null) {
+                graph.SetCycle(result);
+            } else {
+                System.out.println("Nearest Neighbor algorithm failed to find a cycle.");
+            }
         }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
 
         buttonLinKernighan = new UIButton(new Rectangle(620, 150, 150, 50), "Lin Kernighan", 
