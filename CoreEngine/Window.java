@@ -22,8 +22,16 @@ public class Window extends JFrame {
         return instance;
     }
 
+    public float GetWidth(){
+        return width;
+    }
+
+    public float GetHeight() {
+        return height;
+    }
+
     private static Window instance = null;
 
     private final int width = 800;
-    private final int height = 600;
+    private final int height = 800;
 }
