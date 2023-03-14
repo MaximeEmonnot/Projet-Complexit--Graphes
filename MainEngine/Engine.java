@@ -30,12 +30,8 @@ public class Engine {
         () -> {
             Timer.GetInstance().Update();
             Map.Entry<String, Map<UnorderedPair, Integer>> result = Algorithms.NearestNeighbour(graph);
-            if (result != null) {
-                graph.SetCycle(result.getValue());
-                graph.SetCycleFirstNode(result.getKey());
-            } else {
-                System.out.println("Nearest Neighbor algorithm failed to find a cycle.");
-            }
+            graph.SetCycle(result.getValue());
+            graph.SetCycleFirstNode(result.getKey());
             Timer.GetInstance().Update();
             algorithmTime = Timer.GetInstance().DeltaTime();
         }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
@@ -89,8 +85,8 @@ public class Engine {
 
         GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(550, 370, 225, 75), Color.BLACK, true, 2);
         GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(552, 372, 221, 71), Color.WHITE, true, 3);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm duration : " + Float.toString(algorithmTime), new Point(575, 400), Color.RED, 5);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm result : " + Integer.toString(graph.GetCycleCost()), new Point(575, 425), Color.RED, 5);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm duration : " + Float.toString(algorithmTime), new Point(568, 400), Color.RED, 5);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm result : " + Integer.toString(graph.GetCycleCost()), new Point(568, 425), Color.RED, 5);
     }
 
     private void BeginLoop(){
