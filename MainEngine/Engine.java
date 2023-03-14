@@ -95,8 +95,10 @@ public class Engine {
 
         graph.Draw();
 
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(550, 370, 225, 75), Color.BLACK, true, 2);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(552, 372, 221, 71), Color.WHITE, true, 3);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(550, 315, 225, 135), Color.BLACK, true, 2);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(552, 317, 221, 131), Color.WHITE, true, 3);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Graph size : " + Integer.toString(graph.GetNodes().size()), new Point(568, 350), Color.RED, 5);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Show cost : " + (graph.IsShowingCost() ? "On" : "Off"), new Point(568, 375), (graph.IsShowingCost() ? Color.GREEN : Color.RED), 5);
         GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm duration : " + Float.toString(algorithmTime), new Point(568, 400), Color.RED, 5);
         GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm result : " + Integer.toString(graph.GetCycleCost()), new Point(568, 425), Color.RED, 5);
     }
@@ -117,7 +119,6 @@ public class Engine {
     	
     	final File folder = new File("./Assets/Graphs");
     	for (final File fileEntry : folder.listFiles()) {
-    		String test = fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1);
     		if(fileEntry.isFile() && fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1).equals("graphe")){
     			items.put(fileEntry.getName(), () -> {if(new File(fileEntry.getPath()).exists()) graph = new TSPGraph(fileEntry.getPath(), new Point(300, 275), 200);});
     		}

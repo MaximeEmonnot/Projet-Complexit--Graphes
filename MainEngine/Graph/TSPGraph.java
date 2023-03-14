@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.Set;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class TSPGraph {
 
     public TSPGraph(String path, Point _center, float _radius) throws Exception{
     	
     	distances = new HashMap<UnorderedPair,Integer>();
-    	nodes = new HashSet<String>();
 		points = new HashMap<String, Rectangle>();
 		cycle = new HashMap<UnorderedPair, Integer>();
 		center = _center;
@@ -32,14 +32,14 @@ public class TSPGraph {
 
 		// Setup des points
 		int index = 0;
-		for (String node : nodes){
-			int nodeRadius = (int)(radius * (1.f - nodes.size() * 0.01f) / 5.f) ;
+		for (Map.Entry<String, Rectangle> entry : points.entrySet()){
+			int nodeRadius = (int)(radius * (1.f - points.size() * 0.01f) / 5.f) ;
 			Rectangle nodeLocation = new Rectangle();
-			nodeLocation.x = center.x + (int)(Math.sin(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
-			nodeLocation.y = center.y - (int)(Math.cos(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
+			nodeLocation.x = center.x + (int)(Math.sin(2 * Math.PI * index / points.size()) * radius) - nodeRadius;
+			nodeLocation.y = center.y - (int)(Math.cos(2 * Math.PI * index / points.size()) * radius) - nodeRadius;
 			nodeLocation.width = nodeRadius;
 			nodeLocation.height = nodeRadius;
-			points.put(node, nodeLocation);
+			entry.setValue(nodeLocation);
 			index++;
 		}
     }
@@ -47,8 +47,8 @@ public class TSPGraph {
     private void addArc(String a, String b, int cost) {
     	distances.put(new UnorderedPair(a, b), cost);
 
-    	nodes.add(a);
-    	nodes.add(b);
+		points.put(a, new Rectangle());
+		points.put(b, new Rectangle());
     }
     
     public Integer getCost(String a, String b) {
@@ -56,6 +56,7 @@ public class TSPGraph {
     }
 
 	public void Update() {
+		// Hover
 		hoveredNode = "";
 		Point mousePos = CoreEngine.Mouse.GetInstance().GetMousePos();
 		for (Map.Entry<String, Rectangle> entry : points.entrySet()){
@@ -68,6 +69,9 @@ public class TSPGraph {
 				break;
 			}
 		}
+		// Toggle affichage node
+		CoreEngine.Keyboard.Event event = CoreEngine.Keyboard.GetInstance().ReadKey();
+		if (event.keycode == KeyEvent.VK_CONTROL && event.event == CoreEngine.Keyboard.Event.EKeyEvent.Released) bIsShowingCost = !bIsShowingCost;
 	}
 
 	// Affichage des nodes : Principe des racines n-ième de l'unité
@@ -100,11 +104,16 @@ public class TSPGraph {
 			if (hoveredNode.isEmpty()){
 				for (Map.Entry<String, Rectangle> entryB : points.entrySet()){
 					UnorderedPair pair = new UnorderedPair(entryA.getKey(), entryB.getKey());
-					if (cycle.containsKey(pair) || cycle.isEmpty()){
+					if (!entryA.getKey().equals(entryB.getKey()) && (cycle.containsKey(pair) || cycle.isEmpty())){
 						Point pointA = textPosition;
 						Point pointB = new Point((int)(entryB.getValue().getLocation().x + entryB.getValue().width / 3), (int)(entryB.getValue().getLocation().y + entryB.getValue().height / 1.5));;
 						Color arcColor = (cycle.isEmpty()) ? Color.BLUE : Color.GREEN;
 						GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(pointA, pointB, arcColor, priority);
+						if (bIsShowingCost){
+							Point middle = new Point((pointA.x + pointB.x) / 2, (pointA.y + pointB.y) / 2);
+							middle.translate(5, 5);
+							GraphicsEngine.GraphicsSystem.GetInstance().DrawText(Integer.toString(distances.get(pair)), middle, Color.ORANGE, priority + 5);
+						}
 					}
 				}
 			}
@@ -148,16 +157,20 @@ public class TSPGraph {
 	}
 
 	public Set<String> GetNodes(){
-		return nodes;
+		return points.keySet();
 	}
 	
 	public Map<UnorderedPair, Integer> GetDistances() {
 		return distances;
 	}
+
+	public boolean IsShowingCost() {
+		return bIsShowingCost;
+	}
     
     // Verifie si tous les couples de noeuds sont reli�s et si les couts sont superieurs ou egaux a 0 
     private boolean isTSPValid() {
-    	Set<String> unvisited = new HashSet<String>(nodes);
+    	Set<String> unvisited = new HashSet<String>(points.keySet());
     	while(unvisited.size() != 0) {
     		String node = (String) unvisited.toArray()[0];
     		unvisited.remove(node);
@@ -171,7 +184,6 @@ public class TSPGraph {
     }
 
     private Map<UnorderedPair,Integer> distances;
-    private Set<String> nodes;
 	private Map<String, Rectangle> points;
 	private Map<UnorderedPair, Integer> cycle;
 	private Point center;
@@ -179,4 +191,5 @@ public class TSPGraph {
 	private String selectedNode = "";
 	private String hoveredNode = "";
 	private String firstNode = "";
+	private boolean bIsShowingCost = false;
 }
