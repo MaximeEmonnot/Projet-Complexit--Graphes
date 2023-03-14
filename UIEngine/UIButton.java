@@ -6,7 +6,7 @@ import GraphicsEngine.GraphicsSystem;
 
 public class UIButton {
     public interface Lambda{
-        void func();
+        void func() throw Exception;
     }
 
     private enum EButtonState{
