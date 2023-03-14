@@ -6,7 +6,7 @@ import GraphicsEngine.GraphicsSystem;
 
 public class UIButton {
     public interface Lambda{
-        void func() throw Exception;
+        void func() throws Exception;
     }
 
     private enum EButtonState{
@@ -24,7 +24,7 @@ public class UIButton {
         pressColor = _pressColor;
     }
 
-    public void Update() {
+    public void Update() throws Exception {
         if (rect.contains(Mouse.GetInstance().GetMousePos())){
             state = EButtonState.HoverState;
             if (Mouse.GetInstance().Read() == Mouse.EEventType.LRelease){
