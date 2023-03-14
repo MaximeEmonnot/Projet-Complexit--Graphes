@@ -14,7 +14,7 @@ import UIEngine.UIButton;
 public class Engine {
     
     private Engine() throws Exception {
-        graph = new TSPGraph("Assets/Graphs/test.graphe", new Point(350, 275), 200);
+        graph = new TSPGraph("Assets/Graphs/test.graphe", new Point(300, 275), 200);
         
         buttonRandom = new UIButton(new Rectangle(620, 50, 150, 50), "Random Cycle", 
         () -> {

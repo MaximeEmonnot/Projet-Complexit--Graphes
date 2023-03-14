@@ -3,7 +3,6 @@ package MainEngine.Graph;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +17,7 @@ public class TSPGraph {
     	
     	distances = new HashMap<UnorderedPair,Integer>();
     	nodes = new HashSet<String>();
+		points = new HashMap<String, Rectangle>();
 		cycle = new HashMap<UnorderedPair, Integer>();
 		center = _center;
 		radius = _radius;
@@ -29,10 +29,24 @@ public class TSPGraph {
         }
         if(!isTSPValid())
         	throw new Exception("It is not a valid TSP graph");
+
+		// Setup des points
+		int index = 0;
+		for (String node : nodes){
+			int nodeRadius = (int)(radius * (1.f - nodes.size() * 0.01f) / 5.f) ;
+			Rectangle nodeLocation = new Rectangle();
+			nodeLocation.x = center.x + (int)(Math.sin(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
+			nodeLocation.y = center.y - (int)(Math.cos(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
+			nodeLocation.width = nodeRadius;
+			nodeLocation.height = nodeRadius;
+			points.put(node, nodeLocation);
+			index++;
+		}
     }
     
     private void addArc(String a, String b, int cost) {
     	distances.put(new UnorderedPair(a, b), cost);
+
     	nodes.add(a);
     	nodes.add(b);
     }
@@ -42,22 +56,16 @@ public class TSPGraph {
     }
 
 	public void Update() {
-		CoreEngine.Mouse.EEventType event = CoreEngine.Mouse.GetInstance().Read();
-		if (event == CoreEngine.Mouse.EEventType.LRelease){
-			Point mousePos = CoreEngine.Mouse.GetInstance().GetMousePos();
-			int index = 0;
-			for (String node : nodes ){
-				int nodeRadius = (int)(radius * (1.f - nodes.size() * 0.01f) / 5.f) ;
-				Point nodeLocation = new Point();
-				nodeLocation.x = center.x + (int)(Math.sin(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
-				nodeLocation.y = center.y - (int)(Math.cos(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
-				Rectangle rect = new Rectangle(nodeLocation, new Dimension(nodeRadius, nodeRadius));
-				if (rect.contains(mousePos)){
-					if (selectedNode.equals(node)) selectedNode = "";
-					else selectedNode = node;
-					break;
+		hoveredNode = "";
+		Point mousePos = CoreEngine.Mouse.GetInstance().GetMousePos();
+		for (Map.Entry<String, Rectangle> entry : points.entrySet()){
+			if (entry.getValue().contains(mousePos)){
+				if (CoreEngine.Mouse.GetInstance().Read() == CoreEngine.Mouse.EEventType.LRelease){
+					if (selectedNode.equals(entry.getKey())) selectedNode = "";
+					else selectedNode = entry.getKey();
 				}
-				index++;
+				hoveredNode = entry.getKey();
+				break;
 			}
 		}
 	}
@@ -67,53 +75,51 @@ public class TSPGraph {
 		Draw(0);
 	}
 	public void Draw(int priority){
-		Set<Point> points = new HashSet<Point>();
-		int index = 0;
-		for (String node : nodes){
-			// Affichgge d'un noeud
-			int nodeRadius = (int)(radius * (1.f - nodes.size() * 0.01f) / 5.f) ;
-			Point nodeLocation = new Point();
-			nodeLocation.x = center.x + (int)(Math.sin(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
-			nodeLocation.y = center.y - (int)(Math.cos(2 * Math.PI * index / nodes.size()) * radius) - nodeRadius;
-			points.add(nodeLocation);
-			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius + 2, nodeRadius + 2)), 
-																	  new Dimension(nodeRadius + 2, nodeRadius + 2), Color.BLACK, true, priority);
-			
+
+		for (Map.Entry<String, Rectangle> entryA : points.entrySet()){
+			Rectangle nodeLocation = entryA.getValue();
+			String node = entryA.getKey();
 			Color nodeColor = Color.WHITE;
 			if (node.equals(firstNode)) nodeColor = Color.GREEN;
 			if (node.equals(selectedNode)) nodeColor = Color.BLUE;
-												  
-			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation, new Dimension( nodeRadius, nodeRadius)), 
-																	  new Dimension(nodeRadius, nodeRadius), nodeColor, true, priority + 2);
-																	  
+			if (node.equals(hoveredNode)) nodeColor = nodeColor.darker().darker();
+			// On affiche le contour
+			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(new Rectangle(nodeLocation.getLocation(), new Dimension(nodeLocation.width + 2, nodeLocation.height + 2)),
+																	 nodeLocation.getSize(), Color.BLACK, true, priority + 1);
+			// Puis l'intérieur
+			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(nodeLocation, nodeLocation.getSize(), nodeColor, true, priority + 2);
 			
-			nodeLocation.x += nodeRadius / 3;
-			nodeLocation.y += nodeRadius / 1.5;
-			GraphicsEngine.GraphicsSystem.GetInstance().DrawText(node, nodeLocation, Color.BLACK, priority + 3);
-			index++;
-		}
-		// Affichage des arcs
-		if (cycle.isEmpty()) for (Point pointA : points) for (Point pointB : points) 
-			GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(pointA, pointB, Color.BLUE, priority);
-		else{
-			int nodeRadius = (int)(radius * (1.f - nodes.size() * 0.01f) / 5.f) ;
-			int indexA = 0;
-			for (String nodeA : nodes) {
-				Point nodeALocation = new Point();
-				nodeALocation.x = center.x + (int)(Math.sin(2 * Math.PI * indexA / nodes.size()) * radius) - 2 * nodeRadius / 3;
-				nodeALocation.y = center.y - (int)(Math.cos(2 * Math.PI * indexA / nodes.size()) * radius) - nodeRadius / 3;
-				int indexB = 0;
-				for (String nodeB : nodes){
-					if (!nodeB.equals(nodeA)) {
-						Point nodeBLocation = new Point();
-						nodeBLocation.x = center.x + (int)(Math.sin(2 * Math.PI * indexB / nodes.size()) * radius) - 2 * nodeRadius / 3;
-						nodeBLocation.y = center.y - (int)(Math.cos(2 * Math.PI * indexB / nodes.size()) * radius) - nodeRadius / 3;
-						UnorderedPair pair = new UnorderedPair(nodeA, nodeB);
-						if (cycle.containsKey(pair)) GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(nodeALocation, nodeBLocation, Color.GREEN, priority);
+			// Puis on affiche le label du noeud
+			Point textPosition = new Point((int)(nodeLocation.x + nodeLocation.width / 3), (int)(nodeLocation.y + nodeLocation.height / 1.5));
+			GraphicsEngine.GraphicsSystem.GetInstance().DrawText(node, textPosition, Color.BLACK, priority + 3);
+
+			// Affichage des arcs
+			// Un noeud est survolé, alors on affiche seulement les arcs qui lui sont reliés,avec leur coût
+			// Si un cycle est présent, alors on affiche seulement les arcs du cyle
+			// Sinon, on affiche tous les arcs
+			if (hoveredNode.isEmpty()){
+				for (Map.Entry<String, Rectangle> entryB : points.entrySet()){
+					UnorderedPair pair = new UnorderedPair(entryA.getKey(), entryB.getKey());
+					if (cycle.containsKey(pair) || cycle.isEmpty()){
+						Point pointA = textPosition;
+						Point pointB = new Point((int)(entryB.getValue().getLocation().x + entryB.getValue().width / 3), (int)(entryB.getValue().getLocation().y + entryB.getValue().height / 1.5));;
+						Color arcColor = (cycle.isEmpty()) ? Color.BLUE : Color.GREEN;
+						GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(pointA, pointB, arcColor, priority);
 					}
-					indexB++;
 				}
-				indexA++;
+			}
+			else if (!hoveredNode.equals(entryA.getKey())){
+				UnorderedPair pair = new UnorderedPair(hoveredNode, entryA.getKey());
+				if (cycle.containsKey(pair) || cycle.isEmpty()){
+					Point pointA = new Point((int)(points.get(hoveredNode).getLocation().x + points.get(hoveredNode).width / 3), (int)(points.get(hoveredNode).getLocation().y + points.get(hoveredNode).height / 1.5));
+					Point pointB = textPosition;
+					Color arcColor = (cycle.isEmpty()) ? Color.BLUE : Color.GREEN;
+					GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(pointA, pointB, arcColor, priority);
+					// On récupère le milieu entre les deux points
+					Point middle = new Point((pointA.x + pointB.x) / 2, (pointA.y + pointB.y) / 2);
+					middle.translate(5, 5);
+					GraphicsEngine.GraphicsSystem.GetInstance().DrawText(Integer.toString(distances.get(new UnorderedPair(hoveredNode, entryA.getKey()))), middle, Color.ORANGE, priority + 5);
+				}
 			}
 		}
 	}
@@ -166,9 +172,11 @@ public class TSPGraph {
 
     private Map<UnorderedPair,Integer> distances;
     private Set<String> nodes;
+	private Map<String, Rectangle> points;
 	private Map<UnorderedPair, Integer> cycle;
 	private Point center;
 	private float radius;
 	private String selectedNode = "";
+	private String hoveredNode = "";
 	private String firstNode = "";
 }
