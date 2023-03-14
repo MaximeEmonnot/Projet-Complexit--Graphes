@@ -1,5 +1,7 @@
 package MainEngine;
 import java.awt.*;
+import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import CoreEngine.Keyboard;
@@ -9,7 +11,7 @@ import GraphicsEngine.GraphicsSystem;
 import MainEngine.Graph.Algorithms;
 import MainEngine.Graph.TSPGraph;
 import MainEngine.Graph.UnorderedPair;
-import UIEngine.UIButton;
+import UIEngine.*;
 
 public class Engine {
     
@@ -117,7 +119,7 @@ public class Engine {
     	for (final File fileEntry : folder.listFiles()) {
     		String test = fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1);
     		if(fileEntry.isFile() && fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1).equals("graphe")){
-    			items.put(fileEntry.getName(), () -> {if(new File(fileEntry.getPath()).exists()) graph = new TSPGraph(fileEntry.getPath(), new Point(350, 275), 200);});
+    			items.put(fileEntry.getName(), () -> {if(new File(fileEntry.getPath()).exists()) graph = new TSPGraph(fileEntry.getPath(), new Point(300, 275), 200);});
     		}
     	}
     	
