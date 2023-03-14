@@ -51,6 +51,11 @@ public class Engine {
             graph.ResetCycle();
             algorithmTime = 0.f;
         }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+        
+        Point selectMenuPosition = new Point(580, 500);
+        
+        TextBoxSelectionGraphsTitle = new UITextBox(new Rectangle(selectMenuPosition.x, selectMenuPosition.y, 190, 50), "Select Graph");
+        selectionMenuGraphs = new UISelectionMenu(new Rectangle(selectMenuPosition.x, selectMenuPosition.y + 50, 190, 170));
     }
 
     public static Engine GetInstance() throws Exception{
@@ -72,6 +77,9 @@ public class Engine {
         buttonNearest.Update();    
         buttonLinKernighan.Update();
         buttonReset.Update();
+        selectionMenuGraphs.Update();
+        
+        RefreshSelectionMenuGraphs();
     }
     private void Draw(){
         GraphicsSystem.GetInstance().SetBackgroundColor(Color.DARK_GRAY);
@@ -80,6 +88,8 @@ public class Engine {
         buttonNearest.Draw(10);
         buttonLinKernighan.Draw(10);
         buttonReset.Draw(10);
+        TextBoxSelectionGraphsTitle.Draw(10);
+        selectionMenuGraphs.Draw(10);
 
         graph.Draw();
 
@@ -99,6 +109,20 @@ public class Engine {
 
         GraphicsSystem.GetInstance().Render();
     }
+    
+    private void RefreshSelectionMenuGraphs() throws Exception{
+    	LinkedHashMap<String, UIButton.Lambda> items = new LinkedHashMap<String, UIButton.Lambda>();
+    	
+    	final File folder = new File("./Assets/Graphs");
+    	for (final File fileEntry : folder.listFiles()) {
+    		String test = fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1);
+    		if(fileEntry.isFile() && fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1).equals("graphe")){
+    			items.put(fileEntry.getName(), () -> {if(new File(fileEntry.getPath()).exists()) graph = new TSPGraph(fileEntry.getPath(), new Point(350, 275), 200);});
+    		}
+    	}
+    	
+    	selectionMenuGraphs.UpdateSelections(items);
+    }
 
     private static Engine instance = null;
 
@@ -107,6 +131,8 @@ public class Engine {
     UIButton buttonNearest;
     UIButton buttonLinKernighan;
     UIButton buttonReset;
+    UITextBox TextBoxSelectionGraphsTitle;
+    UISelectionMenu selectionMenuGraphs;
 
     float algorithmTime = 0.f;
 }
