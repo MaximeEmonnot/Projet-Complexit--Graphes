@@ -14,7 +14,7 @@ public class UnorderedPair {
 	public String getLeft() {
 		return left;
 	}
-	
+
 	@Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) 

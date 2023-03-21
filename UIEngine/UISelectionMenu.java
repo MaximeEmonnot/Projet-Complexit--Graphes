@@ -4,12 +4,9 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 import CoreEngine.Mouse;
-import CoreEngine.Timer;
 import GraphicsEngine.GraphicsSystem;
-import MainEngine.Graph.Algorithms;
 
 public class UISelectionMenu {
 	

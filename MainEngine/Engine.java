@@ -119,7 +119,7 @@ public class Engine {
     	
     	final File folder = new File("./Assets/Graphs");
     	for (final File fileEntry : folder.listFiles()) {
-    		if(fileEntry.isFile() && fileEntry.getName().substring(fileEntry.getName().lastIndexOf('.') + 1).equals("graphe")){
+    		if(fileEntry.isFile()){
     			items.put(fileEntry.getName(), () -> {if(new File(fileEntry.getPath()).exists()) graph = new TSPGraph(fileEntry.getPath(), new Point(300, 275), 200);});
     		}
     	}
