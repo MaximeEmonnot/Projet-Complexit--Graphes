@@ -20,28 +20,28 @@ import UIEngine.UIButton.Lambda;
 public class Engine {
     
     private Engine() throws Exception {
-        graph = new TSPGraph("Assets/Graphs/test.graphe", new Point(300, 265), 200);
+        graph = new TSPGraph("Assets/Graphs/test.graphe", new Point(290, 265), 200);
         
-        buttonRandom = new UIButton(new Rectangle(620, 50, 150, 50), "Random Cycle", 
+        buttonRandom = new UIButton(new Rectangle(540, 50, 225, 50), "Random Cycle", 
         () -> RunRandomCycle(false), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
         
-        buttonNearest = new UIButton(new Rectangle(620, 100, 150, 50), "Nearest Neighbor", 
+        buttonNearest = new UIButton(new Rectangle(540, 100, 225, 50), "Nearest Neighbor", 
         () -> RunNearestNeighbor(false), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
 
-        buttonLinKernighan = new UIButton(new Rectangle(620, 150, 150, 50), "Lin Kernighan", 
+        buttonLinKernighan = new UIButton(new Rectangle(540, 150, 225, 50), "Lin Kernighan", 
         () -> RunLinKernighan(false), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
 
-        buttonReset = new UIButton(new Rectangle(620, 200, 150, 50), "Reset", 
+        buttonReset = new UIButton(new Rectangle(540, 200, 225, 50), "Reset", 
         () -> ResetAll(), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
         
-        Point selectMenuPosition = new Point(580, 500);
-        TextBoxSelectionGraphsTitle = new UITextBox(new Rectangle(selectMenuPosition.x, selectMenuPosition.y, 190, 50), "Select Graph");
-        selectionMenuGraphs = new UISelectionMenu(new Rectangle(selectMenuPosition.x, selectMenuPosition.y + 50, 190, 170));
+        Point selectMenuPosition = new Point(540, 500);
+        TextBoxSelectionGraphsTitle = new UITextBox(new Rectangle(selectMenuPosition.x, selectMenuPosition.y, 225, 50), "Select Graph");
+        selectionMenuGraphs = new UISelectionMenu(new Rectangle(selectMenuPosition.x, selectMenuPosition.y + 50, 225, 170));
         
-        testAlgorithmParameter = new UIInputBox(new Rectangle(25, 500, 250, 60), "Number of test");
+        testAlgorithmParameter = new UIInputBox(new Rectangle(15, 500, 250, 60), "Number of test");
         testAlgorithmParameter.SetNewAuthorizedChar("0123456789");
         testAlgorithmParameter.SetNewMaximalSize(16);
-        testAlgorithmSelector = new UISelectionMenu(new Rectangle(275, 500, 250, 60));
+        testAlgorithmSelector = new UISelectionMenu(new Rectangle(265, 500, 250, 60));
     	LinkedHashMap<String, UIButton.Lambda> items = new LinkedHashMap<String, UIButton.Lambda>();
         items.put("Random Cycle", () -> RunRandomCycle(true));
         items.put("Nearest Neighbor", () -> RunNearestNeighbor(true));
@@ -49,7 +49,7 @@ public class Engine {
         testAlgorithmSelector.UpdateSelections(items);
         testAlgorithmSelector.SetItemHeight(60);
         testAlgorithmSelector.SetScrollBarSize(5);
-        saveTest = new UIButton(new Rectangle(424, 649, 100, 50), "Save", () -> SaveTestResults(), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+        saveTest = new UIButton(new Rectangle(414, 649, 100, 50), "Save", () -> SaveTestResults(), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
     }
 
     public static Engine GetInstance() throws Exception{
@@ -97,20 +97,20 @@ public class Engine {
         graph.Draw();
 
         // Affichage résultat simple
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(550, 315, 225, 135), Color.BLACK, true, 2);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(552, 317, 221, 131), Color.WHITE, true, 3);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Graph size : " + Integer.toString(graph.GetNodes().size()), new Point(568, 350), Color.RED, 5);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Show cost : " + (graph.IsShowingCost() ? "On" : "Off"), new Point(568, 375), (graph.IsShowingCost() ? Color.GREEN : Color.RED), 5);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm duration : " + Float.toString(algorithmTime), new Point(568, 400), Color.RED, 5);
-        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm result : " + Integer.toString(graph.GetCycleCost()), new Point(568, 425), Color.RED, 5);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(540, 315, 225, 135), Color.BLACK, true, 2);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(541, 316, 223, 133), Color.WHITE, true, 3);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Graph size : " + Integer.toString(graph.GetNodes().size()), new Point(558, 350), Color.RED, 5);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Show cost : " + (graph.IsShowingCost() ? "On" : "Off"), new Point(558, 375), (graph.IsShowingCost() ? Color.GREEN : Color.RED), 5);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm duration : " + Float.toString(algorithmTime), new Point(558, 400), Color.RED, 5);
+        GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Algorithm result : " + Integer.toString(graph.GetCycleCost()), new Point(558, 425), Color.RED, 5);
    
         // Affichage résultat test
         if (remainingIterations == 0 && selectedAlgorithm != null){
-            GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(25, 560, 500, 140), Color.BLACK, true, 4);
-            GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(26, 561, 498, 138), Color.WHITE, true, 5);
-            GraphicsEngine.GraphicsSystem.GetInstance().DrawText("TEST RESULT - " + selectedAlgorithmName, new Point(160, 580), Color.RED, 10);
-            GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Mean time : " + Float.toString(sumAlgorithmTime / totalIterations), new Point(50, 625), Color.RED, 10);
-            GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Mean result : " + Float.toString(sumAlgorithmResult / totalIterations), new Point(50, 650), Color.RED, 10);
+            GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(15, 560, 500, 140), Color.BLACK, true, 4);
+            GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(16, 561, 498, 138), Color.WHITE, true, 5);
+            GraphicsEngine.GraphicsSystem.GetInstance().DrawText("TEST RESULT - " + selectedAlgorithmName, new Point(150, 580), Color.RED, 10);
+            GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Mean time : " + Float.toString(sumAlgorithmTime / totalIterations), new Point(40, 625), Color.RED, 10);
+            GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Mean result : " + Float.toString(sumAlgorithmResult / totalIterations), new Point(40, 650), Color.RED, 10);
             saveTest.Draw(10);
         }
     }
@@ -132,7 +132,7 @@ public class Engine {
     	final File folder = new File("./Assets/Graphs");
     	for (final File fileEntry : folder.listFiles()) {
     		if(fileEntry.isFile()){
-    			items.put(fileEntry.getName(), () -> {if(new File(fileEntry.getPath()).exists()) graph = new TSPGraph(fileEntry.getPath(), new Point(300, 275), 200);});
+    			items.put(fileEntry.getName(), () -> {if(new File(fileEntry.getPath()).exists()) graph = new TSPGraph(fileEntry.getPath(), new Point(290, 265), 200);});
     		}
     	}
     	

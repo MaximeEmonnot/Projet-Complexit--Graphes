@@ -33,5 +33,5 @@ public class Window extends JFrame {
     private static Window instance = null;
 
     private final int width = 800;
-    private final int height = 800;
+    private final int height = 755;
 }
