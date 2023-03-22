@@ -285,6 +285,7 @@ public class TSPGraph {
 	public void ResetCycle() {
 		cycle = new HashMap<UnorderedPair, Integer>();
 		firstNode = "";
+		selectedNode = "";
 	}
 
 	public int GetCycleCost(){

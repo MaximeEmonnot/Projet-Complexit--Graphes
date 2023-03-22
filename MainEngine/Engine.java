@@ -1,6 +1,9 @@
 package MainEngine;
 import java.awt.*;
 import java.io.File;
+import java.io.FileWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -29,10 +32,7 @@ public class Engine {
         () -> RunLinKernighan(false), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
 
         buttonReset = new UIButton(new Rectangle(620, 200, 150, 50), "Reset", 
-        () -> {
-            graph.ResetCycle();
-            algorithmTime = 0.f;
-        }, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+        () -> ResetAll(), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
         
         Point selectMenuPosition = new Point(580, 500);
         TextBoxSelectionGraphsTitle = new UITextBox(new Rectangle(selectMenuPosition.x, selectMenuPosition.y, 190, 50), "Select Graph");
@@ -49,7 +49,7 @@ public class Engine {
         testAlgorithmSelector.UpdateSelections(items);
         testAlgorithmSelector.SetItemHeight(60);
         testAlgorithmSelector.SetScrollBarSize(5);
-        saveTest = new UIButton(new Rectangle(424, 649, 100, 50), "Save", () -> {}, Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+        saveTest = new UIButton(new Rectangle(424, 649, 100, 50), "Save", () -> SaveTestResults(), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
     }
 
     public static Engine GetInstance() throws Exception{
@@ -108,7 +108,7 @@ public class Engine {
         if (remainingIterations == 0 && selectedAlgorithm != null){
             GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(25, 560, 500, 140), Color.BLACK, true, 4);
             GraphicsEngine.GraphicsSystem.GetInstance().DrawRect(new Rectangle(26, 561, 498, 138), Color.WHITE, true, 5);
-            GraphicsEngine.GraphicsSystem.GetInstance().DrawText("TEST RESULT - " + selectedAlgorithmName, new Point(175, 580), Color.RED, 10);
+            GraphicsEngine.GraphicsSystem.GetInstance().DrawText("TEST RESULT - " + selectedAlgorithmName, new Point(160, 580), Color.RED, 10);
             GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Mean time : " + Float.toString(sumAlgorithmTime / totalIterations), new Point(50, 625), Color.RED, 10);
             GraphicsEngine.GraphicsSystem.GetInstance().DrawText("Mean result : " + Float.toString(sumAlgorithmResult / totalIterations), new Point(50, 650), Color.RED, 10);
             saveTest.Draw(10);
@@ -231,6 +231,37 @@ public class Engine {
             algorithmTime = Timer.GetInstance().DeltaTime();
         }
     }
+
+    private void ResetAll() {
+        graph.ResetCycle();
+        algorithmTime = 0.f;
+        remainingIterations = 0;
+        totalIterations = 0;
+        selectedAlgorithm = null;
+        selectedAlgorithmName = "";
+        sumAlgorithmResult = 0.f;
+        sumAlgorithmTime = 0.f;
+    }
+
+    private void SaveTestResults() throws Exception {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd_MM_yyyy HH_mm_ss");  
+        LocalDateTime now = LocalDateTime.now();  
+
+        FileWriter output = new FileWriter("Assets/Out/"+ dtf.format(now) + ".txt");
+
+        String result = "=====================================================\n";
+        result += "\nRESULTS\n\n";
+        result += "Graph size : " + Integer.toString(graph.GetNodes().size()) + "\n";
+        result += "Algorithm : " + selectedAlgorithmName + "\n";
+        result += "Iterations : " + Integer.toString(totalIterations) + "\n";
+        result += "Mean time : " + Float.toString(sumAlgorithmTime / totalIterations) + "\n";
+        result += "Mean result : " + Float.toString(sumAlgorithmResult / totalIterations) + "\n\n";
+        result += "=====================================================\n";
+
+        output.append(result);
+        output.close();
+    }
+
 
     private static Engine instance = null;
 
