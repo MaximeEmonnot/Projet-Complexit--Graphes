@@ -59,6 +59,16 @@ public class UISelectionMenu {
 		}
 		
 	}
+
+	public void SetItemHeight(int newItemHeight) {
+		ITEM_HEIGHT = newItemHeight;
+		UpdateButtons();
+	}
+
+	public void SetScrollBarSize(int size){
+		PADDING = size;
+		UpdateButtons();
+	}
 	
 	private void UpdateButtons() {
 		buttons.clear();
@@ -82,7 +92,7 @@ public class UISelectionMenu {
 	private int scrollPosition = 0;
 	private float scrollBarHeight;
 	
-	private static final int ITEM_HEIGHT = 30;
-	private static final int PADDING = 20;
+	private int ITEM_HEIGHT = 30;
+	private int PADDING = 20;
 
 }

@@ -18,7 +18,8 @@ public class UIInputBox {
 
         if (bIsFocused){
             char c = Keyboard.GetInstance().ReadChar();
-            if (authorizedChar.contains(Character.toString(c))) text += c;
+            if (authorizedChar.isEmpty() && defaultAuthorizedChar.contains(Character.toString(c)) && text.length() < maximalSize) text += c;
+            else if (!authorizedChar.isEmpty() && authorizedChar.contains(Character.toString(c)) && text.length() < maximalSize) text += c;
             else if (c == 8 && !text.isEmpty()) text = text.substring(0, text.length() - 1);
         }
     }
@@ -47,9 +48,23 @@ public class UIInputBox {
         ), textFont, textColor, priority + 2);
     }
 
+    public void SetNewAuthorizedChar(String newAuthorizedChar){
+        authorizedChar = newAuthorizedChar;
+    }
+
+    public void SetNewMaximalSize(int newMaximalSize){
+        maximalSize = newMaximalSize;
+    }
+
+    public String GetText() {
+        return text;
+    }
+
     private Rectangle rect;
     private String description;
     private String text = "";
     private boolean bIsFocused = false;
-    private final static String authorizedChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!,;.:/\\\'\"°+-*@&éèêàùç²{([|])}=_><%$€#~ ";
+    private String authorizedChar = "";
+    private int maximalSize = Integer.MAX_VALUE;
+    private final static String defaultAuthorizedChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!,;.:/\\\'\"°+-*@&éèêàùç²{([|])}=_><%$€#~ ";
 }
