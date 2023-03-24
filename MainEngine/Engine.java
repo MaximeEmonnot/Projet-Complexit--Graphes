@@ -126,7 +126,8 @@ public class Engine {
             GraphicsEngine.GraphicsSystem.GetInstance().DrawText("TEST RESULT - " + selectedAlgorithmName,
                     new Point(150, 580), Color.RED, 10);
             GraphicsEngine.GraphicsSystem.GetInstance().DrawText(
-                    "Mean time : " + Float.toString(sumAlgorithmTime * 1000/ totalIterations) + " ms", new Point(40, 625), Color.RED,
+                    "Mean time : " + Float.toString(sumAlgorithmTime * 1000 / totalIterations) + " ms",
+                    new Point(40, 625), Color.RED,
                     10);
             GraphicsEngine.GraphicsSystem.GetInstance().DrawText(
                     "Mean length : " + Float.toString(sumAlgorithmResult / totalIterations), new Point(40, 650),
@@ -270,7 +271,7 @@ public class Engine {
         FileWriter output = new FileWriter("Assets/Out/" + dtf.format(now) + ".txt");
 
         String result = "=====================================================\n";
-        result += "\nRESULTS\n\n";
+        result += "\nRESULTS FOR " + graph.getName() + "\n\n";
         result += "Graph size : " + Integer.toString(graph.GetNodes().size()) + "\n";
         result += "Algorithm : " + selectedAlgorithmName + "\n";
         result += "Iterations : " + Integer.toString(totalIterations) + "\n";
@@ -304,4 +305,5 @@ public class Engine {
     int totalIterations = 0;
     float sumAlgorithmTime = 0.f;
     float sumAlgorithmResult = 0.f;
+
 }
