@@ -15,7 +15,11 @@ public class TSPGraph {
 
 	public TSPGraph(String path, Point _center, float _radius) throws Exception {
 
-		name = path.substring(path.lastIndexOf("/") + 1);
+		if (path.contains("/")) {
+			name = path.substring(path.lastIndexOf("/") + 1);
+		} else if (path.contains("\\")) {
+			name = path.substring(path.lastIndexOf("\\") + 1);
+		}
 		distances = new HashMap<UnorderedPair, Integer>();
 		points = new HashMap<String, Rectangle>();
 		cycle = new HashMap<UnorderedPair, Integer>();
