@@ -1,0 +1,11 @@
+=====================================================
+
+RESULTS
+
+Graph size : 10
+Algorithm : Nearest Neighbor
+Iterations : 50
+Mean time : 2.6399992 ms
+Mean length : 16.12
+
+=====================================================

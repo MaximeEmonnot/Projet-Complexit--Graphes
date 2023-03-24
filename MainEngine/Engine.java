@@ -114,7 +114,7 @@ public class Engine {
                 "Duration : " + Float.toString(algorithmTime * 1000) + " ms",
                 new Point(558, 400), Color.RED, 5);
         GraphicsEngine.GraphicsSystem.GetInstance().DrawText(
-                "Algorithm cost : " + Integer.toString(graph.GetCycleCost()) + " cycles", new Point(558, 425),
+                "Cycle length : " + Integer.toString(graph.GetCycleCost()), new Point(558, 425),
                 Color.RED, 5);
 
         // Affichage résultat test
@@ -126,10 +126,10 @@ public class Engine {
             GraphicsEngine.GraphicsSystem.GetInstance().DrawText("TEST RESULT - " + selectedAlgorithmName,
                     new Point(150, 580), Color.RED, 10);
             GraphicsEngine.GraphicsSystem.GetInstance().DrawText(
-                    "Mean time : " + Float.toString(sumAlgorithmTime / totalIterations), new Point(40, 625), Color.RED,
+                    "Mean time : " + Float.toString(sumAlgorithmTime * 1000/ totalIterations) + " ms", new Point(40, 625), Color.RED,
                     10);
             GraphicsEngine.GraphicsSystem.GetInstance().DrawText(
-                    "Mean result : " + Float.toString(sumAlgorithmResult / totalIterations), new Point(40, 650),
+                    "Mean length : " + Float.toString(sumAlgorithmResult / totalIterations), new Point(40, 650),
                     Color.RED, 10);
             saveTest.Draw(10);
         }
@@ -274,8 +274,8 @@ public class Engine {
         result += "Graph size : " + Integer.toString(graph.GetNodes().size()) + "\n";
         result += "Algorithm : " + selectedAlgorithmName + "\n";
         result += "Iterations : " + Integer.toString(totalIterations) + "\n";
-        result += "Mean time : " + Float.toString(sumAlgorithmTime / totalIterations) + "\n";
-        result += "Mean cost : " + Float.toString(sumAlgorithmResult / totalIterations) + " cycles\n\n";
+        result += "Mean time : " + Float.toString(sumAlgorithmTime * 1000 / totalIterations) + " ms\n";
+        result += "Mean length : " + Float.toString(sumAlgorithmResult / totalIterations) + "\n\n";
         result += "=====================================================\n";
 
         output.append(result);
