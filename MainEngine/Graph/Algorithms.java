@@ -100,10 +100,88 @@ public class Algorithms {
     
 
     public static Map.Entry<String, Map<UnorderedPair, Integer>> LinKernighanHeuristic(TSPGraph graph){
-        Map<UnorderedPair, Integer> output = new HashMap<UnorderedPair, Integer>();
+    	
+    	// LinKernighanHeuristic 2-opt partant d'un cycle aleatoire
 
-        // TODO
+        // Recuperation des valeurs utiles
+        Map<UnorderedPair, Integer> distances = graph.GetDistances();
+        Map.Entry<String, Map<UnorderedPair, Integer>> randomCycle =  RandomCycle(graph);
+        String selectedNode = randomCycle.getKey();
+        Set<UnorderedPair> cycle = randomCycle.getValue().keySet();
+        
+        
+        // Initialisation du cycle
+        String current = selectedNode;
+        List<String> nodeOrder = new ArrayList<>();
+        do {
+        	for(UnorderedPair arc : cycle) {
+        		if(arc.getLeft().equals(current)) {
+        			nodeOrder.add(current);
+        			current = arc.getRight();
+        			break;
+        		}
+        	}	
+        }while(!current.equals(selectedNode));
+        
+        final int cycleSize = nodeOrder.size();
 
-        return Map.entry("", output);
+        
+        // Boucle de recherche 2-opt
+        boolean improvement = true;
+        while (improvement) {
+            improvement = false;
+
+            // Parcourir les paires d'arcs
+            for (int i = 0; i < cycleSize; i++) {
+                for (int j = i + 1; j < cycleSize; j++) {
+                    if (j - i == 1 || (i == 0 && j == cycleSize - 1)) {
+                        continue; // si paire d'arc consecutif, pas la peine de considérer
+                    }
+
+                    String node1 = nodeOrder.get(i);
+                    String node2 = nodeOrder.get(j);
+                    String node1Next = nodeOrder.get((i + 1) % cycleSize);
+                    String node2Next = nodeOrder.get((j + 1) % cycleSize);
+
+                    int gain = distances.get(new UnorderedPair(node1, node1Next)) +
+                            distances.get(new UnorderedPair(node2, node2Next)) -
+                            distances.get(new UnorderedPair(node1, node2)) -
+                            distances.get(new UnorderedPair(node1Next, node2Next));
+
+                    // Si optimisation possible
+                    if (gain > 0) {
+                        // effectuer la modification
+                    	
+                    	// On inverse tel que la paire d'arc (A, B) (C, D) devient (A, C) (B, D)
+                    	nodeOrder.set((i + 1) % cycleSize, node2);
+                    	nodeOrder.set(j, node1Next);
+                    	
+                    	
+                    	// On inverse le sens de tous les arcs entre C et B
+                    	final int inverseFrom = i > j ? (j + 1) % cycleSize + 1 : (i + 1) % cycleSize + 1;
+                    	final int inverseTo = i > j ? i - 1 : j - 1;
+                    	
+                    	List<String> nodesToInverse = new ArrayList<String>(nodeOrder.subList(inverseFrom, inverseTo + 1));
+                    	
+                    	for(int n = inverseFrom; n <= inverseTo; n++) {
+                    		nodeOrder.set(n, nodesToInverse.get(inverseTo - n));
+                    	}
+
+                        // Indique qu'une amélioration a été trouvée
+                        improvement = true;
+                    }
+                }
+            }
+        }
+        
+        // Creation du resultat dans le format attendu
+        Map<UnorderedPair, Integer> output = new HashMap<>();
+        for (int l = 0; l < cycleSize; l++) {
+            String node = nodeOrder.get(l);
+            String nextNode = nodeOrder.get((l + 1) % cycleSize);
+            output.put(new UnorderedPair(node, nextNode), distances.get(new UnorderedPair(node, nextNode)));
+        }
+
+        return Map.entry(selectedNode, output);
     }
 }
