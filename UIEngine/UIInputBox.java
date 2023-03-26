@@ -3,6 +3,7 @@ import java.awt.*;
 
 import CoreEngine.Keyboard;
 import CoreEngine.Mouse;
+import CoreEngine.Timer;
 import GraphicsEngine.GraphicsSystem;
 
 public class UIInputBox {
@@ -17,11 +18,10 @@ public class UIInputBox {
             bIsFocused = rect.contains(Mouse.GetInstance().GetMousePos());
 
         if (bIsFocused){
-            char c = Keyboard.GetInstance().ReadChar();
-            if (authorizedChar.isEmpty() && defaultAuthorizedChar.contains(Character.toString(c)) && text.length() < maximalSize) text += c;
-            else if (!authorizedChar.isEmpty() && authorizedChar.contains(Character.toString(c)) && text.length() < maximalSize) text += c;
-            else if (c == 8 && !text.isEmpty()) text = text.substring(0, text.length() - 1);
+            IndicatorRoutine();
+            ReadRoutine();
         }
+        else text = text.replace("|", "");
     }
 
     public void Draw(){
@@ -36,15 +36,15 @@ public class UIInputBox {
         if (!bIsFocused && text.length() == 0){
             textToDraw = description;
             textColor = Color.GRAY;
-            textFont = new Font("Arial Bold", Font.ITALIC, 16);
+            textFont = new Font("Arial Bold", Font.ITALIC, FONTSIZE);
         }
         else{
             textToDraw = text;
-            textFont = new Font("Arial Bold", Font.PLAIN, 16);
+            textFont = new Font("Arial Bold", Font.PLAIN, FONTSIZE);
         } 
         GraphicsSystem.GetInstance().DrawText(textToDraw, new Point(
             rect.x + (int)(0.1f * rect.width),
-            rect.y + (int)(0.6f * rect.height)
+            rect.y + (int)(0.5f * rect.height + 0.5f * FONTSIZE * 0.75f)
         ), textFont, textColor, priority + 2);
     }
 
@@ -57,9 +57,37 @@ public class UIInputBox {
     }
 
     public String GetText() {
-        return text;
+        return text.replace("|", "");
     }
 
+    public void SetText(String _text){
+        text = _text;
+    }
+    
+    public void SetDescription(String newDescription){
+        description = newDescription;
+    }
+
+    private void IndicatorRoutine() {
+        currentTimer += Timer.GetInstance().DeltaTime();
+        if (currentTimer > timer){
+            if (text.endsWith("|")) text = text.replace("|", "");
+            else text += "|";
+            currentTimer = 0.f;
+        }
+    }
+
+    private void ReadRoutine() {
+        char c = Keyboard.GetInstance().ReadChar();
+        if (c != 0) {
+            text = text.replace("|", "");
+            currentTimer = 0.f;
+        }
+        if (authorizedChar.isEmpty() && defaultAuthorizedChar.contains(Character.toString(c)) && text.length() < maximalSize) text += c;
+        else if (!authorizedChar.isEmpty() && authorizedChar.contains(Character.toString(c)) && text.length() < maximalSize) text += c;
+        else if (c == 8 && !text.isEmpty()) text = text.substring(0, text.length() - 1);
+    }
+    
     private Rectangle rect;
     private String description;
     private String text = "";
@@ -67,4 +95,8 @@ public class UIInputBox {
     private String authorizedChar = "";
     private int maximalSize = Integer.MAX_VALUE;
     private final static String defaultAuthorizedChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!,;.:/\\\'\"°+-*@&éèêàùç²{([|])}=_><%$€#~ ";
+    private final static int FONTSIZE = 16;
+    
+    private final float timer = 0.75f;
+    private float currentTimer = 0.0f; 
 }
