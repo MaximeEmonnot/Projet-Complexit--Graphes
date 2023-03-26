@@ -63,13 +63,6 @@ public class Algorithms {
                     nearestNeighbour = other;
                 }
             }
-            if (nearestNeighbour == null) {
-                System.out.println("Erreur : le voisin le plus proche du point" + currentNode + " n'a pas été trouvé.");
-                return null;
-            }
-    
-            System.out.println("Current node: " + currentNode);
-            System.out.println("Nearest neighbour: " + nearestNeighbour);
             UnorderedPair firstArc = new UnorderedPair(currentNode, nearestNeighbour);
             output.put(firstArc, distances.get(firstArc));
             currentNode = nearestNeighbour;
@@ -79,12 +72,6 @@ public class Algorithms {
         // Ajout du dernier arc pour revenir au point de départ
         UnorderedPair lastArc = new UnorderedPair(currentNode, firstNode);
         output.put(lastArc, distances.get(lastArc));
-    
-        for (Map.Entry<UnorderedPair, Integer> entry : output.entrySet()) {
-            UnorderedPair pair = entry.getKey();
-            int distance = entry.getValue();
-            System.out.println("Arc: " + pair.getLeft() + " - " + pair.getRight() + ", Distance: " + distance);
-        }
     
         return Map.entry(firstNode, output);
     }

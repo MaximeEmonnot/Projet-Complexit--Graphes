@@ -1,0 +1,11 @@
+=====================================================
+
+RESULTS FOR d198.tsp
+
+Graph size : 198
+Algorithm : Nearest Neighbor
+Iterations : 50
+Mean time : 1.0599993 ms
+Mean length : 146624.06
+
+=====================================================
