@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import GraphicsEngine.GraphicsSystem;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -204,24 +206,26 @@ public class TSPGraph {
 
 	public void Update() {
 		// Hover
-		hoveredNode = "";
-		Point mousePos = CoreEngine.Mouse.GetInstance().GetMousePos();
-		for (Map.Entry<String, Rectangle> entry : points.entrySet()) {
-			if (entry.getValue().contains(mousePos)) {
-				if (CoreEngine.Mouse.GetInstance().Read() == CoreEngine.Mouse.EEventType.LRelease) {
-					if (selectedNode.equals(entry.getKey()))
-						selectedNode = "";
-					else
-						selectedNode = entry.getKey();
+		if (points.size() <= 200) {
+			hoveredNode = "";
+			Point mousePos = CoreEngine.Mouse.GetInstance().GetMousePos();
+			for (Map.Entry<String, Rectangle> entry : points.entrySet()) {
+				if (entry.getValue().contains(mousePos)) {
+					if (CoreEngine.Mouse.GetInstance().Read() == CoreEngine.Mouse.EEventType.LRelease) {
+						if (selectedNode.equals(entry.getKey()))
+							selectedNode = "";
+						else
+							selectedNode = entry.getKey();
+					}
+					hoveredNode = entry.getKey();
+					break;
 				}
-				hoveredNode = entry.getKey();
-				break;
 			}
+			// Toggle affichage node
+			CoreEngine.Keyboard.Event event = CoreEngine.Keyboard.GetInstance().ReadKey();
+			if (event.keycode == KeyEvent.VK_CONTROL && event.event == CoreEngine.Keyboard.Event.EKeyEvent.Released)
+				bIsShowingCost = !bIsShowingCost;
 		}
-		// Toggle affichage node
-		CoreEngine.Keyboard.Event event = CoreEngine.Keyboard.GetInstance().ReadKey();
-		if (event.keycode == KeyEvent.VK_CONTROL && event.event == CoreEngine.Keyboard.Event.EKeyEvent.Released)
-			bIsShowingCost = !bIsShowingCost;
 	}
 
 	// Affichage des nodes : Principe des racines n-ième de l'unité
@@ -230,72 +234,80 @@ public class TSPGraph {
 	}
 
 	public void Draw(int priority) {
+		if (points.size() <= 200){
+			for (Map.Entry<String, Rectangle> entryA : points.entrySet()) {
+				Rectangle nodeLocation = entryA.getValue();
+				String node = entryA.getKey();
+				Color nodeColor = Color.WHITE;
+				if (node.equals(firstNode))
+					nodeColor = Color.GREEN;
+				if (node.equals(selectedNode))
+					nodeColor = Color.BLUE;
+				if (node.equals(hoveredNode))
+					nodeColor = nodeColor.darker().darker();
+				// On affiche le contour
+				GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(
+						new Rectangle(nodeLocation.getLocation(), new Dimension(nodeLocation.width + 2, nodeLocation.height + 2)),
+						nodeLocation.getSize(), Color.BLACK, true, priority + 1);
+				// Puis l'intérieur
+				GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(nodeLocation, nodeLocation.getSize(), nodeColor, true,
+						priority + 2);
 
-		for (Map.Entry<String, Rectangle> entryA : points.entrySet()) {
-			Rectangle nodeLocation = entryA.getValue();
-			String node = entryA.getKey();
-			Color nodeColor = Color.WHITE;
-			if (node.equals(firstNode))
-				nodeColor = Color.GREEN;
-			if (node.equals(selectedNode))
-				nodeColor = Color.BLUE;
-			if (node.equals(hoveredNode))
-				nodeColor = nodeColor.darker().darker();
-			// On affiche le contour
-			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(
-					new Rectangle(nodeLocation.getLocation(), new Dimension(nodeLocation.width + 2, nodeLocation.height + 2)),
-					nodeLocation.getSize(), Color.BLACK, true, priority + 1);
-			// Puis l'intérieur
-			GraphicsEngine.GraphicsSystem.GetInstance().DrawRoundRect(nodeLocation, nodeLocation.getSize(), nodeColor, true,
-					priority + 2);
+				// Puis on affiche le label du noeud (si le nombre total de noeud est inférieur
+				// à 50)
+				Point textPosition = new Point((int) (nodeLocation.x + nodeLocation.width / 3),
+						(int) (nodeLocation.y + nodeLocation.height / 1.5));
+				if (points.size() < 50) {
+					GraphicsEngine.GraphicsSystem.GetInstance().DrawText(node, textPosition, Color.BLACK, priority + 3);
+				}
 
-			// Puis on affiche le label du noeud (si le nombre total de noeud est inférieur
-			// à 50)
-			Point textPosition = new Point((int) (nodeLocation.x + nodeLocation.width / 3),
-					(int) (nodeLocation.y + nodeLocation.height / 1.5));
-			if (points.size() < 50) {
-				GraphicsEngine.GraphicsSystem.GetInstance().DrawText(node, textPosition, Color.BLACK, priority + 3);
-			}
-
-			// Affichage des arcs
-			// Un noeud est survolé, alors on affiche seulement les arcs qui lui sont
-			// reliés,avec leur coût
-			// Si un cycle est présent, alors on affiche seulement les arcs du cyle
-			// Sinon, on affiche tous les arcs
-			if (hoveredNode.isEmpty()) {
-				for (Map.Entry<String, Rectangle> entryB : points.entrySet()) {
-					UnorderedPair pair = new UnorderedPair(entryA.getKey(), entryB.getKey());
-					if (!entryA.getKey().equals(entryB.getKey()) && (cycle.containsKey(pair) || cycle.isEmpty())) {
-						Point pointA = textPosition;
-						Point pointB = new Point((int) (entryB.getValue().getLocation().x + entryB.getValue().width / 3),
-								(int) (entryB.getValue().getLocation().y + entryB.getValue().height / 1.5));
-						;
-						Color arcColor = (cycle.isEmpty()) ? Color.BLUE : Color.GREEN;
-						GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(pointA, pointB, arcColor, priority);
-						if (bIsShowingCost) {
-							Point middle = new Point((pointA.x + pointB.x) / 2, (pointA.y + pointB.y) / 2);
-							middle.translate(5, 5);
-							GraphicsEngine.GraphicsSystem.GetInstance().DrawText(Integer.toString(distances.get(pair)), middle,
-									Color.ORANGE, priority + 5);
+				// Affichage des arcs
+				// Un noeud est survolé, alors on affiche seulement les arcs qui lui sont
+				// reliés,avec leur coût
+				// Si un cycle est présent, alors on affiche seulement les arcs du cyle
+				// Sinon, on affiche tous les arcs
+				if (hoveredNode.isEmpty()) {
+					for (Map.Entry<String, Rectangle> entryB : points.entrySet()) {
+						UnorderedPair pair = new UnorderedPair(entryA.getKey(), entryB.getKey());
+						if (!entryA.getKey().equals(entryB.getKey()) && (cycle.containsKey(pair) || cycle.isEmpty())) {
+							Point pointA = textPosition;
+							Point pointB = new Point((int) (entryB.getValue().getLocation().x + entryB.getValue().width / 3),
+									(int) (entryB.getValue().getLocation().y + entryB.getValue().height / 1.5));
+							;
+							Color arcColor = (cycle.isEmpty()) ? Color.BLUE : Color.GREEN;
+							GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(pointA, pointB, arcColor, priority);
+							if (bIsShowingCost) {
+								Point middle = new Point((pointA.x + pointB.x) / 2, (pointA.y + pointB.y) / 2);
+								middle.translate(5, 5);
+								GraphicsEngine.GraphicsSystem.GetInstance().DrawText(Integer.toString(distances.get(pair)), middle,
+										Color.ORANGE, priority + 5);
+							}
 						}
 					}
-				}
-			} else if (!hoveredNode.equals(entryA.getKey())) {
-				UnorderedPair pair = new UnorderedPair(hoveredNode, entryA.getKey());
-				if (cycle.containsKey(pair) || cycle.isEmpty()) {
-					Point pointA = new Point((int) (points.get(hoveredNode).getLocation().x + points.get(hoveredNode).width / 3),
-							(int) (points.get(hoveredNode).getLocation().y + points.get(hoveredNode).height / 1.5));
-					Point pointB = textPosition;
-					Color arcColor = (cycle.isEmpty()) ? Color.BLUE : Color.GREEN;
-					GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(pointA, pointB, arcColor, priority);
-					// On récupère le milieu entre les deux points
-					Point middle = new Point((pointA.x + pointB.x) / 2, (pointA.y + pointB.y) / 2);
-					middle.translate(5, 5);
-					GraphicsEngine.GraphicsSystem.GetInstance().DrawText(
-							Integer.toString(distances.get(new UnorderedPair(hoveredNode, entryA.getKey()))), middle, Color.ORANGE,
-							priority + 5);
+				} else if (!hoveredNode.equals(entryA.getKey())) {
+					UnorderedPair pair = new UnorderedPair(hoveredNode, entryA.getKey());
+					if (cycle.containsKey(pair) || cycle.isEmpty()) {
+						Point pointA = new Point((int) (points.get(hoveredNode).getLocation().x + points.get(hoveredNode).width / 3),
+								(int) (points.get(hoveredNode).getLocation().y + points.get(hoveredNode).height / 1.5));
+						Point pointB = textPosition;
+						Color arcColor = (cycle.isEmpty()) ? Color.BLUE : Color.GREEN;
+						GraphicsEngine.GraphicsSystem.GetInstance().DrawLine(pointA, pointB, arcColor, priority);
+						// On récupère le milieu entre les deux points
+						Point middle = new Point((pointA.x + pointB.x) / 2, (pointA.y + pointB.y) / 2);
+						middle.translate(5, 5);
+						GraphicsEngine.GraphicsSystem.GetInstance().DrawText(
+								Integer.toString(distances.get(new UnorderedPair(hoveredNode, entryA.getKey()))), middle, Color.ORANGE,
+								priority + 5);
+					}
 				}
 			}
+		}
+		else {
+			// Affichage rectangle d'info "Too many nodes to display"
+			Rectangle rect = new Rectangle(new Point((int)(center.x - radius), (int)(center.y - radius)), new Dimension((int)radius*2, (int)radius*2));
+			GraphicsSystem.GetInstance().DrawRect(rect, Color.WHITE, true, priority);
+			GraphicsSystem.GetInstance().DrawRect(rect, Color.BLACK, false, priority + 1);
+			GraphicsSystem.GetInstance().DrawText("TOO MANY NODES TO DISPLAY", new Point((int)(center.x - radius * 0.55), center.y), Color.RED, priority + 2);
 		}
 	}
 
