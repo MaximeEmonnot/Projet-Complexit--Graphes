@@ -1,4 +1,5 @@
 package CoreEngine;
+
 import javax.swing.JFrame;
 
 import GraphicsEngine.GraphicsSystem;
@@ -22,7 +23,7 @@ public class Window extends JFrame {
         return instance;
     }
 
-    public float GetWidth(){
+    public float GetWidth() {
         return width;
     }
 
@@ -32,6 +33,6 @@ public class Window extends JFrame {
 
     private static Window instance = null;
 
-    private final int width = 800;
+    private final int width = 1030;
     private final int height = 755;
 }

@@ -41,6 +41,13 @@ public class Engine {
         selectionMenuGraphs = new UISelectionMenu(
                 new Rectangle(selectMenuPosition.x, selectMenuPosition.y + 50, 225, 170));
 
+        Point selectStartMenuPosition = new Point(780, 50);
+        TextBoxSelectionStartNodeTitle = new UITextBox(
+                new Rectangle(selectStartMenuPosition.x, selectStartMenuPosition.y, 225, 50), "Select Start Node");
+
+        selectionMenuStartNode = new UISelectionMenu(
+                new Rectangle(selectStartMenuPosition.x, selectStartMenuPosition.y + 50, 225, 600));
+
         testAlgorithmParameter = new UIInputBox(new Rectangle(15, 500, 250, 60), "Number of test");
         testAlgorithmParameter.SetNewAuthorizedChar("0123456789");
         testAlgorithmParameter.SetNewMaximalSize(16);
@@ -77,6 +84,7 @@ public class Engine {
         buttonLinKernighan.Update();
         buttonReset.Update();
         selectionMenuGraphs.Update();
+        selectionMenuStartNode.Update();
         testAlgorithmParameter.Update();
         testAlgorithmSelector.Update();
 
@@ -88,6 +96,8 @@ public class Engine {
             saveTest.Update();
 
         RefreshSelectionMenuGraphs();
+        RefreshSelectionMenuStartNode();
+
     }
 
     private void Draw() {
@@ -98,7 +108,9 @@ public class Engine {
         buttonLinKernighan.Draw(10);
         buttonReset.Draw(10);
         TextBoxSelectionGraphsTitle.Draw(10);
+        TextBoxSelectionStartNodeTitle.Draw(10);
         selectionMenuGraphs.Draw(10);
+        selectionMenuStartNode.Draw(10);
         testAlgorithmParameter.Draw(10);
         testAlgorithmSelector.Draw(10);
         graph.Draw();
@@ -161,6 +173,18 @@ public class Engine {
         }
 
         selectionMenuGraphs.UpdateSelections(items);
+    }
+
+    private void RefreshSelectionMenuStartNode() throws Exception {
+        LinkedHashMap<String, UIButton.Lambda> items = new LinkedHashMap<String, UIButton.Lambda>();
+
+        for (String entry : graph.GetNodes()) {
+            items.put(entry, () -> {
+                graph.SetCycleFirstNode(entry);
+            });
+        }
+
+        selectionMenuStartNode.UpdateSelections(items);
     }
 
     private void RunRandomCycle(boolean bIsTesting) {
@@ -291,7 +315,9 @@ public class Engine {
     UIButton buttonLinKernighan;
     UIButton buttonReset;
     UITextBox TextBoxSelectionGraphsTitle;
+    UITextBox TextBoxSelectionStartNodeTitle;
     UISelectionMenu selectionMenuGraphs;
+    UISelectionMenu selectionMenuStartNode;
 
     float algorithmTime = 0.f;
 
