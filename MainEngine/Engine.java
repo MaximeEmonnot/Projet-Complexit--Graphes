@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import AudioEngine.AudioManager;
 import CoreEngine.Keyboard;
 import CoreEngine.Mouse;
 import CoreEngine.Timer;
@@ -91,6 +92,7 @@ public class Engine {
         if (selectedAlgorithm != null && remainingIterations > 0) {
             selectedAlgorithm.func();
             remainingIterations--;
+            if (remainingIterations == 0) AudioManager.GetInstance().PlaySound("Assets/Sounds/success.wav");
         }
         if (remainingIterations == 0 && selectedAlgorithm != null)
             saveTest.Update();
@@ -190,7 +192,7 @@ public class Engine {
         selectionMenuStartNode.UpdateSelections(items);
     }
 
-    private void RunRandomCycle(boolean bIsTesting) {
+    private void RunRandomCycle(boolean bIsTesting) throws Exception {
         if (bIsTesting) {
             String parameter = testAlgorithmParameter.GetText();
             if (!parameter.isEmpty()) {
@@ -217,10 +219,11 @@ public class Engine {
             graph.SetCycleFirstNode(result.getKey());
             Timer.GetInstance().Update();
             algorithmTime = Timer.GetInstance().DeltaTime();
+            AudioManager.GetInstance().PlaySound("Assets/Sounds/success.wav");
         }
     }
 
-    private void RunNearestNeighbor(boolean bIsTesting) {
+    private void RunNearestNeighbor(boolean bIsTesting) throws Exception {
         if (bIsTesting) {
             String parameter = testAlgorithmParameter.GetText();
             if (!parameter.isEmpty()) {
@@ -247,10 +250,11 @@ public class Engine {
             graph.SetCycleFirstNode(result.getKey());
             Timer.GetInstance().Update();
             algorithmTime = Timer.GetInstance().DeltaTime();
+            AudioManager.GetInstance().PlaySound("Assets/Sounds/success.wav");
         }
     }
 
-    private void RunLinKernighan(boolean bIsTesting) {
+    private void RunLinKernighan(boolean bIsTesting) throws Exception {
         if (bIsTesting) {
             String parameter = testAlgorithmParameter.GetText();
             if (!parameter.isEmpty()) {
@@ -277,6 +281,7 @@ public class Engine {
             graph.SetCycleFirstNode(result.getKey());
             Timer.GetInstance().Update();
             algorithmTime = Timer.GetInstance().DeltaTime();
+            AudioManager.GetInstance().PlaySound("Assets/Sounds/success.wav");
         }
     }
 
