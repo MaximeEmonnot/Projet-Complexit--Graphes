@@ -43,7 +43,7 @@ public class Engine {
 
         Point selectStartMenuPosition = new Point(780, 50);
         TextBoxSelectionStartNodeTitle = new UITextBox(
-                new Rectangle(selectStartMenuPosition.x, selectStartMenuPosition.y, 225, 50), "Select Start Node");
+                new Rectangle(selectStartMenuPosition.x, selectStartMenuPosition.y, 225, 50), "Select Start Node : Random");
 
         selectionMenuStartNode = new UISelectionMenu(
                 new Rectangle(selectStartMenuPosition.x, selectStartMenuPosition.y + 50, 225, 600));
@@ -166,8 +166,10 @@ public class Engine {
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isFile()) {
                 items.put(fileEntry.getName(), () -> {
-                    if (new File(fileEntry.getPath()).exists())
+                    if (new File(fileEntry.getPath()).exists()){
                         graph = new TSPGraph(fileEntry.getPath(), new Point(290, 265), 200);
+                        TextBoxSelectionStartNodeTitle.SetText("Select Start Node : Random");
+                    }
                 });
             }
         }
@@ -180,7 +182,8 @@ public class Engine {
 
         for (String entry : graph.GetNodes()) {
             items.put(entry, () -> {
-                graph.SetCycleFirstNode(entry);
+                graph.SetSelectedNode(entry);
+                TextBoxSelectionStartNodeTitle.SetText("Select Start Node : " + entry);
             });
         }
 
@@ -286,6 +289,7 @@ public class Engine {
         selectedAlgorithmName = "";
         sumAlgorithmResult = 0.f;
         sumAlgorithmTime = 0.f;
+        TextBoxSelectionStartNodeTitle.SetText("Select Start Node : Random");
     }
 
     private void SaveTestResults() throws Exception {

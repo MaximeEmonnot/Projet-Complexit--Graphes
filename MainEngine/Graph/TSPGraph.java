@@ -319,6 +319,10 @@ public class TSPGraph {
 		firstNode = newFirstNode;
 	}
 
+	public void SetSelectedNode(String newSelectedNode){
+		selectedNode = newSelectedNode;
+	}
+
 	public String GetSelectedNode() {
 		return selectedNode;
 	}
