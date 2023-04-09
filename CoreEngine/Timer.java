@@ -1,4 +1,9 @@
 package CoreEngine;
+
+/*
+ * Singleton responsable de la gestion du temps
+ * Calcul le temps écoulé entre chaque appel de la méthode Update()
+ */
 public class Timer {
     private Timer() {
         oldTime = System.currentTimeMillis();

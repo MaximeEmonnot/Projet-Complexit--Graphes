@@ -17,8 +17,11 @@ import MainEngine.Graph.Algorithms;
 import MainEngine.Graph.TSPGraph;
 import MainEngine.Graph.UnorderedPair;
 import UIEngine.*;
-import UIEngine.UIButton.Lambda;
 
+/*
+ * Coeur de l'application
+ * Une seule scène affichant un graphe et les différentes actions possible pour tester les algorithmes sur les graphes
+ */
 public class Engine {
 
     private Engine() throws Exception {
@@ -53,7 +56,7 @@ public class Engine {
         testAlgorithmParameter.SetNewAuthorizedChar("0123456789");
         testAlgorithmParameter.SetNewMaximalSize(16);
         testAlgorithmSelector = new UISelectionMenu(new Rectangle(265, 500, 250, 60));
-        LinkedHashMap<String, UIButton.Lambda> items = new LinkedHashMap<String, UIButton.Lambda>();
+        LinkedHashMap<String, UILambda> items = new LinkedHashMap<String, UILambda>();
         items.put("Random Cycle", () -> RunRandomCycle(true));
         items.put("Nearest Neighbor", () -> RunNearestNeighbor(true));
         items.put("Lin Kernighan", () -> RunLinKernighan(true));
@@ -162,7 +165,7 @@ public class Engine {
     }
 
     private void RefreshSelectionMenuGraphs() throws Exception {
-        LinkedHashMap<String, UIButton.Lambda> items = new LinkedHashMap<String, UIButton.Lambda>();
+        LinkedHashMap<String, UILambda> items = new LinkedHashMap<String, UILambda>();
 
         final File folder = new File("./Assets/Graphs");
         for (final File fileEntry : folder.listFiles()) {
@@ -180,7 +183,7 @@ public class Engine {
     }
 
     private void RefreshSelectionMenuStartNode() throws Exception {
-        LinkedHashMap<String, UIButton.Lambda> items = new LinkedHashMap<String, UIButton.Lambda>();
+        LinkedHashMap<String, UILambda> items = new LinkedHashMap<String, UILambda>();
 
         for (String entry : graph.GetNodes()) {
             items.put(entry, () -> {
@@ -334,7 +337,7 @@ public class Engine {
     UISelectionMenu testAlgorithmSelector;
     UIButton saveTest;
 
-    Lambda selectedAlgorithm = null;
+    UILambda selectedAlgorithm = null;
     String selectedAlgorithmName = "";
     int remainingIterations = 0;
     int totalIterations = 0;

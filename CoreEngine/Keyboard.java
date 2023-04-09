@@ -6,6 +6,10 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/*
+ * Singleton responsable du traitement des entrées clavier de l'utilisateur
+ * Garde en mémoire les différentes entrées
+ */
 public class Keyboard implements KeyListener {
 
     static public class Event {
@@ -32,21 +36,24 @@ public class Keyboard implements KeyListener {
         return instance;
     }
 
-
+    // Lecture de la dernière touche enregistrée (Appuyée ou Relachée)
     public Event ReadKey(){
         if (!keyBuffer.isEmpty()) return keyBuffer.peek();
         return new Event(0, Event.EKeyEvent.None);
     }
 
+    // Lecture du dernier caractère
     public char ReadChar(){
         if (!charBuffer.isEmpty()) return charBuffer.peek();
         return 0;
     }
 
+    // Méthode renvoyant l'état de la liste des évènement (vide ou non)
     public boolean IsEmpty(){
         return keyBuffer.isEmpty();
     }
 
+    // Retrait du dernier évènement. Appelé à chaque frame
     public void Pop(){
         if (!keyBuffer.isEmpty()) keyBuffer.remove();
         if (!charBuffer.isEmpty()) charBuffer.remove();
@@ -77,8 +84,7 @@ public class Keyboard implements KeyListener {
         return "Key pressed : " + keyBuffer.size() + " Char pressed : " + charBuffer.size();
     }
 
-
-    private <T> void TrimBuffer(Queue<T> buffer){
+    private synchronized <T> void TrimBuffer(Queue<T> buffer){
         if (buffer.size() > sizeBuffer) buffer.remove();
     } 
     

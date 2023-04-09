@@ -4,6 +4,10 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
+/*
+ * Singleton responsable du stockage des images
+ * Utilise un système de poids mouche pour lier un chemin à un fichier
+ */
 public class SpriteFactory {
     private SpriteFactory(){}
 

@@ -13,6 +13,11 @@ import GraphicsEngine.GraphicsSystem;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+/*
+ * Classe représentant un graphe pour le problème TSP
+ * Affichage réalisé grâce aux formules des racines n-ième de l'unité
+ * Lecture de deux types de fichiers : .graphe et .tsp
+ */
 public class TSPGraph {
 
 	public TSPGraph(String path, Point _center, float _radius) throws Exception {

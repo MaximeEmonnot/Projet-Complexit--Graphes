@@ -4,6 +4,10 @@ import java.awt.event.*;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/*
+ * Singleton responsable des entrées souris de l'utilisateur
+ * Garde en mémoire les différents évènements de la souris
+ */
 public class Mouse implements MouseListener, MouseWheelListener, MouseMotionListener {
     
     public enum EEventType {
@@ -30,35 +34,35 @@ public class Mouse implements MouseListener, MouseWheelListener, MouseMotionList
         return instance;
     }
 
+    // Lecture du dernier évènement enregistré
     public EEventType Read() {
         if (!buffer.isEmpty()) return buffer.peek();
         return EEventType.None;
     }
 
+    // Récupération de la position de la souris
     public int GetMousePosX(){
         return position.x;
     }
-
     public int GetMousePosY() {
         return position.y;
     }
-
     public Point GetMousePos(){
         return position;
     }
 
+    // Récupération des états des boutons
     public boolean LeftIsPressed() {
         return bLeftIsPressed;
     }
-
     public boolean MiddleIsPressed() {
         return bMiddleIsPressed;
     }
-
     public boolean RightIsPressed() {
         return bRightIsPressed;
     }
 
+    // Retrait du dernier évènement. Appelé à chaque frame
     public void Pop(){
         if (!buffer.isEmpty()) buffer.remove();
     }
@@ -176,7 +180,7 @@ public class Mouse implements MouseListener, MouseWheelListener, MouseMotionList
         return "Mouse postion : (" + position.x + ", " + position.y + ") Buttons State : L = " + bLeftIsPressed + " M = " + bMiddleIsPressed + " R = " + bRightIsPressed;
     }
 
-    private void TrimBuffer() {
+    private synchronized void TrimBuffer() {
         if (buffer.size() > bufferSize) buffer.remove();
     }
 

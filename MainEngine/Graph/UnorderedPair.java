@@ -1,5 +1,9 @@
 package MainEngine.Graph;
 
+/*
+ * Classe représentant une paire non ordonnée, c'est-à-dire un couple de valeurs
+ * Deux couples égaux sont par exemple (A, B) et (B, A)
+ */
 public class UnorderedPair {
 	
 	public UnorderedPair(String left , String right) {

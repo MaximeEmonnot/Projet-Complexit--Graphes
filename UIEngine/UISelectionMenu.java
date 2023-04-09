@@ -8,18 +8,21 @@ import java.util.LinkedHashMap;
 import CoreEngine.Mouse;
 import GraphicsEngine.GraphicsSystem;
 
+/*
+ * Classe d'un menu de sélection. Définit une liste de boutons à cliquer
+ */
 public class UISelectionMenu {
 	
 	public UISelectionMenu(Rectangle _rect) {
 		this.rect = _rect;
-		items = new LinkedHashMap<String, UIButton.Lambda>();
+		items = new LinkedHashMap<String, UILambda>();
 		buttons = new ArrayList<UIButton>();
 		rect.height -= rect.height % ITEM_HEIGHT;
 		scrollBarHeight = items.size() <= MaxItems() ? rect.height : rect.height / ((float)items.size() /  MaxItems());
 		UpdateButtons();
 	}
 	
-	public void UpdateSelections(LinkedHashMap<String, UIButton.Lambda> _items) {
+	public void UpdateSelections(LinkedHashMap<String, UILambda> _items) {
 		if(items.keySet().equals(_items.keySet()))
 			return;
 		this.items = _items;
@@ -28,6 +31,8 @@ public class UISelectionMenu {
 		UpdateButtons();
 	}
 	
+	// Update du menu
+	// Parcours du menu à la molette
 	public void Update() throws Exception {
 		if (scrollPosition > 0 && Mouse.GetInstance().Read() == Mouse.EEventType.WheelUp && rect.contains(Mouse.GetInstance().GetMousePos())){
 			scrollPosition--;
@@ -41,6 +46,9 @@ public class UISelectionMenu {
 		}
 	}
 	
+	// Affichage du menu
+	// Affichage des différents boutons
+	// Affichage de la barre de scroll
 	public void Draw(int priority) {
 		
 		final float y = items.size() <= MaxItems() ? rect.y : rect.y + (rect.height - scrollBarHeight) * (scrollPosition / (float)(items.size() - MaxItems())) + 1;
@@ -87,7 +95,7 @@ public class UISelectionMenu {
 	}
 	
 	private Rectangle rect;
-	private LinkedHashMap<String, UIButton.Lambda> items;
+	private LinkedHashMap<String, UILambda> items;
 	private ArrayList<UIButton> buttons;
 	private int scrollPosition = 0;
 	private float scrollBarHeight;

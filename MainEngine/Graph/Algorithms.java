@@ -9,6 +9,12 @@ import java.util.Set;
 
 import java.util.Iterator;
 
+/*
+ * Les différents algorithmes utilisés, trois sont présents
+ * RandomCycle pour créer un cycle aléatoire (pour tester le dispositif)
+ * NearestNeighbour pour l'algorithme du même nom (Approximation)
+ * LinKernighan pour l'heuristique de Lin Kernighan
+ */
 public class Algorithms {
 
     public static Map.Entry<String, Map<UnorderedPair, Integer>> RandomCycle(TSPGraph graph){

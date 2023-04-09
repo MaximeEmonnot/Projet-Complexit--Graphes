@@ -2,6 +2,10 @@ package ExceptionEngine;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+/*
+ * Exception du moteur
+ * Affiche également les message d'erreur en détail dans un JOptionPane
+ */
 public class EngineException extends Exception {
     public EngineException() {
         super();
