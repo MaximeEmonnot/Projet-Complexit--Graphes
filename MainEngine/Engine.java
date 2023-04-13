@@ -28,13 +28,13 @@ public class Engine {
         graph = new TSPGraph("Assets/Graphs/test.graphe", new Point(290, 265), 200);
 
         buttonRandom = new UIButton(new Rectangle(540, 50, 225, 50), "Random Cycle",
-                () -> RunRandomCycle(false), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+                () -> RunAlgorithm("Random Cycle", false), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
 
         buttonNearest = new UIButton(new Rectangle(540, 100, 225, 50), "Nearest Neighbor",
-                () -> RunNearestNeighbor(false), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+                () -> RunAlgorithm("Nearest Neighbor",false), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
 
         buttonLinKernighan = new UIButton(new Rectangle(540, 150, 225, 50), "Lin Kernighan",
-                () -> RunLinKernighan(false), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
+                () -> RunAlgorithm("Lin Kernighan", false), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
 
         buttonReset = new UIButton(new Rectangle(540, 200, 225, 50), "Reset",
                 () -> ResetAll(), Color.WHITE, Color.LIGHT_GRAY, Color.DARK_GRAY);
@@ -57,9 +57,9 @@ public class Engine {
         testAlgorithmParameter.SetNewMaximalSize(16);
         testAlgorithmSelector = new UISelectionMenu(new Rectangle(265, 500, 250, 60));
         LinkedHashMap<String, UILambda> items = new LinkedHashMap<String, UILambda>();
-        items.put("Random Cycle", () -> RunRandomCycle(true));
-        items.put("Nearest Neighbor", () -> RunNearestNeighbor(true));
-        items.put("Lin Kernighan", () -> RunLinKernighan(true));
+        items.put("Random Cycle", () -> RunAlgorithm("Random Cycle", true));
+        items.put("Nearest Neighbor", () -> RunAlgorithm("Nearest Neighbor", true));
+        items.put("Lin Kernighan", () -> RunAlgorithm("Lin Kernighan",true));
         testAlgorithmSelector.UpdateSelections(items);
         testAlgorithmSelector.SetItemHeight(60);
         testAlgorithmSelector.SetScrollBarSize(5);
@@ -195,18 +195,24 @@ public class Engine {
         selectionMenuStartNode.UpdateSelections(items);
     }
 
-    private void RunRandomCycle(boolean bIsTesting) throws Exception {
-        if (bIsTesting) {
+    private void RunAlgorithm(String algorithmName, boolean bIsTesting) throws Exception{
+        if (bIsTesting){
             String parameter = testAlgorithmParameter.GetText();
-            if (!parameter.isEmpty()) {
+            if (!parameter.isEmpty()){
                 remainingIterations = Integer.parseInt(parameter);
                 totalIterations = remainingIterations;
-                selectedAlgorithmName = "Random Cycle";
+                selectedAlgorithmName = algorithmName;
                 sumAlgorithmTime = 0.f;
                 sumAlgorithmResult = 0.f;
                 selectedAlgorithm = () -> {
                     Timer.GetInstance().Update();
-                    Map.Entry<String, Map<UnorderedPair, Integer>> result = Algorithms.RandomCycle(graph);
+                    Map.Entry<String, Map<UnorderedPair, Integer>> result = null;
+                    switch(algorithmName){
+                        case "Random Cycle" : result = Algorithms.RandomCycle(graph); break;
+                        case "Nearest Neighbor" : result = Algorithms.NearestNeighbour(graph); break;
+                        case "Lin Kernighan" : result = Algorithms.LinKernighanHeuristic(graph); break;
+                        default : break;
+                    }
                     graph.SetCycle(result.getValue());
                     graph.SetCycleFirstNode(result.getKey());
                     Timer.GetInstance().Update();
@@ -217,69 +223,13 @@ public class Engine {
             }
         } else {
             Timer.GetInstance().Update();
-            Map.Entry<String, Map<UnorderedPair, Integer>> result = Algorithms.RandomCycle(graph);
-            graph.SetCycle(result.getValue());
-            graph.SetCycleFirstNode(result.getKey());
-            Timer.GetInstance().Update();
-            algorithmTime = Timer.GetInstance().DeltaTime();
-            AudioManager.GetInstance().PlaySound("Assets/Sounds/success.wav");
-        }
-    }
-
-    private void RunNearestNeighbor(boolean bIsTesting) throws Exception {
-        if (bIsTesting) {
-            String parameter = testAlgorithmParameter.GetText();
-            if (!parameter.isEmpty()) {
-                remainingIterations = Integer.parseInt(parameter);
-                totalIterations = remainingIterations;
-                selectedAlgorithmName = "Nearest Neighbor";
-                sumAlgorithmTime = 0.f;
-                sumAlgorithmResult = 0.f;
-                selectedAlgorithm = () -> {
-                    Timer.GetInstance().Update();
-                    Map.Entry<String, Map<UnorderedPair, Integer>> result = Algorithms.NearestNeighbour(graph);
-                    graph.SetCycle(result.getValue());
-                    graph.SetCycleFirstNode(result.getKey());
-                    Timer.GetInstance().Update();
-                    algorithmTime = Timer.GetInstance().DeltaTime();
-                    sumAlgorithmTime += Timer.GetInstance().DeltaTime();
-                    sumAlgorithmResult += graph.GetCycleCost();
-                };
+            Map.Entry<String, Map<UnorderedPair, Integer>> result = null;
+            switch(algorithmName){
+                case "Random Cycle" : result = Algorithms.RandomCycle(graph); break;
+                case "Nearest Neighbor" : result = Algorithms.NearestNeighbour(graph); break;
+                case "Lin Kernighan" : result = Algorithms.LinKernighanHeuristic(graph); break;
+                default : break;
             }
-        } else {
-            Timer.GetInstance().Update();
-            Map.Entry<String, Map<UnorderedPair, Integer>> result = Algorithms.NearestNeighbour(graph);
-            graph.SetCycle(result.getValue());
-            graph.SetCycleFirstNode(result.getKey());
-            Timer.GetInstance().Update();
-            algorithmTime = Timer.GetInstance().DeltaTime();
-            AudioManager.GetInstance().PlaySound("Assets/Sounds/success.wav");
-        }
-    }
-
-    private void RunLinKernighan(boolean bIsTesting) throws Exception {
-        if (bIsTesting) {
-            String parameter = testAlgorithmParameter.GetText();
-            if (!parameter.isEmpty()) {
-                remainingIterations = Integer.parseInt(parameter);
-                totalIterations = remainingIterations;
-                selectedAlgorithmName = "Lin Kernighan";
-                sumAlgorithmTime = 0.f;
-                sumAlgorithmResult = 0.f;
-                selectedAlgorithm = () -> {
-                    Timer.GetInstance().Update();
-                    Map.Entry<String, Map<UnorderedPair, Integer>> result = Algorithms.LinKernighanHeuristic(graph);
-                    graph.SetCycle(result.getValue());
-                    graph.SetCycleFirstNode(result.getKey());
-                    Timer.GetInstance().Update();
-                    algorithmTime = Timer.GetInstance().DeltaTime();
-                    sumAlgorithmTime += Timer.GetInstance().DeltaTime();
-                    sumAlgorithmResult += graph.GetCycleCost();
-                };
-            }
-        } else {
-            Timer.GetInstance().Update();
-            Map.Entry<String, Map<UnorderedPair, Integer>> result = Algorithms.LinKernighanHeuristic(graph);
             graph.SetCycle(result.getValue());
             graph.SetCycleFirstNode(result.getKey());
             Timer.GetInstance().Update();
