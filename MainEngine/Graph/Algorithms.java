@@ -91,7 +91,6 @@ public class Algorithms {
         return iter.next();
     }
     
-
     public static Map.Entry<String, Map<UnorderedPair, Integer>> LinKernighanHeuristic(TSPGraph graph){
     	
     	// LinKernighanHeuristic 2-opt partant d'un cycle aleatoire
@@ -177,4 +176,5 @@ public class Algorithms {
 
         return Map.entry(selectedNode, output);
     }
+
 }
